@@ -33,15 +33,15 @@ import com.silas.omaster.util.PresetI18n
 import com.silas.omaster.util.formatSigned
 
 /**
- * 悬浮窗服务 - 高级美观版
+ * Dịch vụ cửa sổ nổi - Phiên bản cao cấp, đẹp mắt
  *
- * 优化内容：
- * 1. 毛玻璃效果背景
- * 2. 渐变标题栏
- * 3. 图标化参数展示
- * 4. 精致的收起/展开动画
- * 5. 悬浮球采用品牌色渐变
- * 6. 动态渲染内容（基于 sections）
+ * Nội dung tối ưu:
+ * 1. Nền hiệu ứng kính mờ
+ * 2. Thanh tiêu đề gradient
+ * 3. Hiển thị thông số dạng biểu tượng
+ * 4. Hiệu ứng thu gọn/mở rộng tinh tế
+ * 5. Quả cầu nổi sử dụng gradient màu thương hiệu
+ * 6. Nội dung hiển thị động (dựa trên sections)
  */
 class FloatingWindowService : Service() {
 
@@ -49,17 +49,17 @@ class FloatingWindowService : Service() {
     private var floatingView: View? = null
     private var params: WindowManager.LayoutParams? = null
     private var isExpanded = true
-    private var edgeAnimator: ValueAnimator? = null  // ✅ 新增：保存动画引用用于生命周期管理
+    private var edgeAnimator: ValueAnimator? = null  // ✅ Mới: Lưu tham chiếu hiệu ứng cho quản lý vòng đời
 
-    // 配色方案
-    private val primaryColor = Color.parseColor("#FF6B35")      // 品牌橙色
-    private val primaryDark = Color.parseColor("#E55A2B")       // 深橙色
-    private val cardBackground = Color.parseColor("#26FFFFFF")  // 卡片背景
-    private val textPrimary = Color.parseColor("#FFFFFF")       // 主文字
-    private val textSecondary = Color.parseColor("#B3FFFFFF")   // 次要文字
-    private val textMuted = Color.parseColor("#80FFFFFF")       // 弱化文字
+    // Bảng màu
+    private val primaryColor = Color.parseColor("#FF6B35")      // Màu cam thương hiệu
+    private val primaryDark = Color.parseColor("#E55A2B")       // Cam đậm
+    private val cardBackground = Color.parseColor("#26FFFFFF")  // Nền thẻ
+    private val textPrimary = Color.parseColor("#FFFFFF")       // Văn bản chính
+    private val textSecondary = Color.parseColor("#B3FFFFFF")   // Văn bản phụ
+    private val textMuted = Color.parseColor("#80FFFFFF")       // Văn bản mờ
     
-    // 背景颜色根据设置动态计算
+    // Màu nền được tính toán động dựa trên cài đặt
     private fun getBackgroundColor(context: Context): Int {
         val opacity = ConfigCenter.getInstance(context).floatingWindowOpacity
         val alpha = (opacity * 255 / 100).coerceIn(30, 255)
@@ -73,30 +73,30 @@ class FloatingWindowService : Service() {
         private const val EXTRA_PRESET_INDEX = "preset_index"
         private const val EXTRA_PRESET_LIST = "preset_list"
 
-        // 保存状态到 Intent 的键
+        // Khóa để lưu trạng thái vào Intent
         private const val EXTRA_IS_EXPANDED = "is_expanded"
         private const val EXTRA_POS_X = "pos_x"
         private const val EXTRA_POS_Y = "pos_y"
         private const val EXTRA_ACTION = "action"
 
-        // Action 类型
+        // Loại Action
         private const val ACTION_SHOW = "show"
         private const val ACTION_UPDATE = "update"
 
-        // 广播 Action
+        // Phát sóng Action
         const val ACTION_SWITCH_PRESET = "com.silas.omaster.SWITCH_PRESET"
         const val EXTRA_SWITCH_DIRECTION = "switch_direction" // "prev" or "next"
 
-        // 服务实例（用于更新内容）
+        // Phiên bản dịch vụ (dùng để cập nhật nội dung)
         @Volatile
         private var instance: FloatingWindowService? = null
 
         fun show(context: Context, preset: com.silas.omaster.model.MasterPreset, presetIndex: Int = 0, presetIds: List<String> = emptyList()) {
-            Logger.i("FloatingWindowService", "显示悬浮窗: ${preset.name}, 索引: $presetIndex, 总数: ${presetIds.size}")
+            Logger.i("FloatingWindowService", "Hiển thị cửa sổ nổi: ${preset.name}, Chỉ mục: $presetIndex, Tổng số: ${presetIds.size}")
             val intent = Intent(context, FloatingWindowService::class.java).apply {
                 putExtra(EXTRA_ACTION, ACTION_SHOW)
                 putExtra(EXTRA_NAME, preset.name)
-                // 获取动态生成的 sections
+                // Lấy sections được tạo động
                 val sections = preset.getDisplaySections(context)
                 putParcelableArrayListExtra(EXTRA_SECTIONS, ArrayList(sections))
 
@@ -109,10 +109,10 @@ class FloatingWindowService : Service() {
         }
 
         /**
-         * 更新悬浮窗内容（不重启服务，避免闪动）
+         * Cập nhật nội dung cửa sổ nổi (không khởi động lại dịch vụ, tránh nhấp nháy)
          */
         fun update(context: Context, preset: com.silas.omaster.model.MasterPreset, presetIndex: Int = 0, presetIds: List<String> = emptyList()) {
-            Logger.d("FloatingWindowService", "更新悬浮窗: ${preset.name}, 索引: $presetIndex")
+            Logger.d("FloatingWindowService", "Cập nhật cửa sổ nổi: ${preset.name}, Chỉ mục: $presetIndex")
             val intent = Intent(context, FloatingWindowService::class.java).apply {
                 putExtra(EXTRA_ACTION, ACTION_UPDATE)
                 putExtra(EXTRA_NAME, preset.name)
@@ -128,12 +128,12 @@ class FloatingWindowService : Service() {
         }
 
         fun hide(context: Context) {
-            Logger.i("FloatingWindowService", "隐藏悬浮窗")
+            Logger.i("FloatingWindowService", "Ẩn cửa sổ nổi")
             context.stopService(Intent(context, FloatingWindowService::class.java))
         }
 
         /**
-         * 检查服务是否正在运行
+         * Kiểm tra xem dịch vụ có đang chạy không
          */
         fun isRunning(): Boolean = instance != null
     }
@@ -146,7 +146,7 @@ class FloatingWindowService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // ✅ 取消正在执行的贴边动画，防止内存泄漏和崩溃
+        // ✅ Hủy hiệu ứng dán viền đang thực thi, tránh rò rỉ bộ nhớ và treo ứng dụng
         edgeAnimator?.cancel()
         edgeAnimator = null
         removeWindow()
@@ -174,10 +174,10 @@ class FloatingWindowService : Service() {
         val presetList = intent.getStringArrayListExtra(EXTRA_PRESET_LIST) ?: arrayListOf()
         val totalCount = presetList.size
 
-        // 读取悬浮窗模式设置
+        // Đọc cài đặt chế độ cửa sổ nổi
         val configMode = ConfigCenter.getInstance(this).floatingWindowMode
         
-        // Realme 预设强制使用标准悬浮窗（新版悬浮窗图标不适配 Realme 相机 UI）
+        // Preset Realme bắt buộc sử dụng cửa sổ nổi tiêu chuẩn (biểu tượng cửa sổ nổi mới không tương thích với UI camera Realme)
         val mode = if (isRealmePreset(sections)) {
             FloatingWindowMode.STANDARD
         } else {
@@ -186,13 +186,13 @@ class FloatingWindowService : Service() {
 
         when (action) {
             ACTION_UPDATE -> {
-                // 更新模式：只更新内容，不移除窗口（避免闪动）
+                // Chế độ cập nhật: Chỉ cập nhật nội dung, không xóa cửa sổ (tránh nhấp nháy)
                 updateWindowContent(
                     name, sections, currentIndex, totalCount, mode
                 )
             }
             else -> {
-                // 显示模式：重新创建窗口
+                // Chế độ hiển thị: Tạo lại cửa sổ
                 removeWindow()
                 if (isExpanded) {
                     when (mode) {
@@ -216,12 +216,12 @@ class FloatingWindowService : Service() {
         return START_STICKY
     }
 
-    // 保存视图引用，用于更新内容
+    // Lưu tham chiếu View, dùng để cập nhật nội dung
     private var mainContainer: LinearLayout? = null
     private var titleTextView: TextView? = null
 
     /**
-     * 更新窗口内容（数据驱动刷新，避免 UI 重建）
+     * Cập nhật nội dung cửa sổ (Làm mới dựa trên dữ liệu, tránh tạo lại UI)
      */
     private fun updateWindowContent(
         name: String,
@@ -230,7 +230,7 @@ class FloatingWindowService : Service() {
         totalCount: Int,
         mode: FloatingWindowMode = FloatingWindowMode.STANDARD
     ) {
-        // 如果窗口不存在，直接创建新窗口
+        // Nếu cửa sổ không tồn tại, tạo trực tiếp cửa sổ mới
         if (floatingView == null || mainContainer == null) {
             when (mode) {
                 FloatingWindowMode.STANDARD -> showExpandedWindow(
@@ -246,10 +246,10 @@ class FloatingWindowService : Service() {
         }
 
         try {
-            // ✅ 1. 直接更新标题（无动画，避免闪烁）
+            // ✅ 1. Cập nhật trực tiếp tiêu đề (không có hiệu ứng, tránh nhấp nháy)
             titleTextView?.text = name
 
-            // ✅ 2. 更新内容区域（只更新数据，不重建视图）
+            // ✅ 2. Cập nhật vùng nội dung (chỉ cập nhật dữ liệu, không tạo lại View)
             val contentContainer = mainContainer?.findViewWithTag<LinearLayout>("content_container")
             contentContainer?.let { container ->
                 container.post {
@@ -261,7 +261,7 @@ class FloatingWindowService : Service() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            // 如果更新失败（如 sections 结构变化），降级为重建窗口
+            // Nếu cập nhật thất bại (ví dụ cấu trúc sections thay đổi), hạ cấp xuống tạo lại cửa sổ
             when (mode) {
                 FloatingWindowMode.STANDARD -> showExpandedWindow(
                     name, sections, params?.x ?: 50, params?.y ?: 300,
@@ -276,17 +276,17 @@ class FloatingWindowService : Service() {
     }
 
     /**
-     * 标准模式：只更新参数值（不重建视图）
+     * Chế độ tiêu chuẩn: Chỉ cập nhật giá trị thông số (không tạo lại View)
      */
     private fun updateStandardContent(sections: List<PresetSection>) {
-        // 遍历所有 section 和 item，根据 tag 查找并更新 TextView
+        // Duyệt qua tất cả section và item, tìm và cập nhật TextView dựa trên tag
         sections.forEach { section ->
             section.items.forEach { item ->
-                // 为每个参数生成唯一的 tag（与创建时一致）
+                // Tạo tag duy nhất cho mỗi thông số (giống như khi tạo)
                 val valueTag = "value_${item.label}_${item.span}"
                 
-                // 查找所有匹配的 TextView 并更新
-                // 由于中文标签可能包含特殊字符，使用递归查找
+                // Tìm tất cả TextView khớp và cập nhật
+                // Do nhãn tiếng Trung có thể chứa các ký tự đặc biệt, hãy sử dụng tìm kiếm đệ quy
                 floatingView?.let { root ->
                     val valueView = findViewWithTagRecursive(root, valueTag)
                     valueView?.text = PresetI18n.resolveValue(this, item.value)
@@ -296,7 +296,7 @@ class FloatingWindowService : Service() {
     }
 
     /**
-     * 递归查找带指定 Tag 的 TextView
+     * Tìm kiếm đệ quy TextView có Tag được chỉ định
      */
     private fun findViewWithTagRecursive(root: View, tag: String): TextView? {
         if (tag == root.tag) {
@@ -317,13 +317,13 @@ class FloatingWindowService : Service() {
     }
 
     /**
-     * 紧凑模式：动态更新参数值（不重建视图）
-     * 根据实际存在的参数数量动态更新
+     * Chế độ thu gọn: Cập nhật động giá trị thông số (không tạo lại View)
+     * Cập nhật động dựa trên số lượng thông số thực tế tồn tại
      */
     private fun updateCompactContent(sections: List<PresetSection>) {
         val paramData = extractDynamicParams(sections)
 
-        // 动态更新参数值 - 只更新实际存在的参数
+        // Cập nhật động giá trị thông số - Chỉ cập nhật các thông số thực tế tồn tại
         paramData.forEachIndexed { index, (value, _) ->
             val valueView = floatingView?.findViewWithTag<TextView>("compact_value_$index")
             valueView?.text = value
@@ -368,7 +368,7 @@ class FloatingWindowService : Service() {
             wm.addView(floatingView, params)
             setupDrag(wm)
             
-            // 初始显示时自动贴边
+            // Tự động dán viền khi hiển thị lần đầu
             floatingView?.post { snapToEdge(wm) }
 
         } catch (e: Exception) {
@@ -418,7 +418,7 @@ class FloatingWindowService : Service() {
             wm.addView(floatingView, params)
             setupDrag(wm)
             
-            // 初始显示时自动贴边
+            // Tự động dán viền khi hiển thị lần đầu
             floatingView?.post { snapToEdge(wm) }
 
         } catch (e: Exception) {
@@ -427,7 +427,7 @@ class FloatingWindowService : Service() {
     }
 
     /**
-     * 显示新版紧凑悬浮窗（参数条样式）
+     * Hiển thị cửa sổ nổi thu gọn phiên bản mới (kiểu thanh thông số)
      */
     private fun showCompactWindow(
         name: String,
@@ -440,7 +440,7 @@ class FloatingWindowService : Service() {
         try {
             val wm = windowManager ?: return
 
-            // 获取屏幕宽度，计算悬浮窗宽度（屏幕宽度 - 32dp）
+            // Lấy chiều rộng màn hình, tính toán chiều rộng cửa sổ nổi (Chiều rộng màn hình - 32dp)
             val metrics = DisplayMetrics()
             wm.defaultDisplay.getMetrics(metrics)
             val screenWidth = metrics.widthPixels
@@ -448,7 +448,7 @@ class FloatingWindowService : Service() {
 
             params = WindowManager.LayoutParams(
                 windowWidth,
-                dpToPx(120), // 高度增加到 120dp（标题栏40dp + 参数区80dp）
+                dpToPx(120), // Tăng chiều cao lên 120dp (Thanh tiêu đề 40dp + Vùng thông số 80dp)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
                 } else {
@@ -459,7 +459,7 @@ class FloatingWindowService : Service() {
                 PixelFormat.TRANSLUCENT
             ).apply {
                 gravity = Gravity.TOP or Gravity.START
-                // 默认位置：屏幕底部偏上，避开相机控制区
+                // Vị trí mặc định: Ở phía dưới màn hình, tránh vùng điều khiển camera
                 x = if (savedX >= 0) savedX else dpToPx(16)
                 y = if (savedY >= 0) savedY else metrics.heightPixels - dpToPx(300)
             }
@@ -479,7 +479,7 @@ class FloatingWindowService : Service() {
     }
 
     /**
-     * 创建紧凑视图 - 新版参数条样式
+     * Tạo view thu gọn - Kiểu thanh thông số phiên bản mới
      */
     private fun createCompactView(
         name: String,
@@ -495,7 +495,7 @@ class FloatingWindowService : Service() {
                 dpToPx(120)
             )
 
-            // 主容器
+            // Container chính
             val container = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 layoutParams = LinearLayout.LayoutParams(
@@ -506,10 +506,10 @@ class FloatingWindowService : Service() {
             }
             mainContainer = container
 
-            // 添加标题栏（预设名称 + 切换按钮 + 收起按钮）
+            // Thêm thanh tiêu đề (Tên preset + Nút chuyển đổi + Nút thu gọn)
             container.addView(createCompactHeader(name, onCollapse, currentIndex, totalCount))
 
-            // 内容容器（带tag，用于更新时查找）
+            // Container nội dung (có tag, dùng để tìm kiếm khi cập nhật)
             val contentContainer = LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 tag = "content_container"
@@ -522,7 +522,7 @@ class FloatingWindowService : Service() {
     }
 
     /**
-     * 创建紧凑标题栏
+     * Tạo thanh tiêu đề thu gọn
      */
     private fun createCompactHeader(
         name: String,
@@ -539,7 +539,7 @@ class FloatingWindowService : Service() {
             )
             setPadding(dpToPx(12), dpToPx(4), dpToPx(12), dpToPx(4))
 
-            // 上一个预设按钮
+            // Nút preset trước đó
             val prevBtn = createCompactIconButton("◀") {
                 sendPresetSwitchBroadcast("prev")
             }
@@ -547,7 +547,7 @@ class FloatingWindowService : Service() {
 
             addView(createSpacing(dpToPx(8)))
 
-            // 预设名称
+            // Tên preset
             val titleView = TextView(context).apply {
                 text = name
                 textSize = 14f
@@ -562,7 +562,7 @@ class FloatingWindowService : Service() {
 
             addView(createSpacing(dpToPx(8)))
 
-            // 下一个预设按钮
+            // Nút preset tiếp theo
             val nextBtn = createCompactIconButton("▶") {
                 sendPresetSwitchBroadcast("next")
             }
@@ -570,20 +570,20 @@ class FloatingWindowService : Service() {
 
             addView(createSpacing(dpToPx(8)))
 
-            // 收起按钮
+            // Nút thu gọn
             val collapseBtn = createCompactIconButton("▼") { onCollapse() }
             addView(collapseBtn)
 
             addView(createSpacing(dpToPx(4)))
 
-            // 关闭按钮
+            // Nút đóng
             val closeBtn = createCompactIconButton("✕") { stopSelf() }
             addView(closeBtn)
         }
     }
 
     /**
-     * 创建紧凑图标按钮
+     * Tạo nút biểu tượng thu gọn
      */
     private fun createCompactIconButton(icon: String, onClick: () -> Unit): TextView {
         return TextView(this).apply {
@@ -596,29 +596,29 @@ class FloatingWindowService : Service() {
                 cornerRadius = dpToPx(6).toFloat()
                 setColor(cardBackground)
             }
-            // 禁用父视图拦截按钮的触摸事件
+            // Vô hiệu hóa view cha chặn sự kiện chạm của nút
             setOnTouchListener { _, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        // 请求父视图不要拦截此事件
+                        // Yêu cầu view cha không chặn sự kiện này
                         parent.requestDisallowInterceptTouchEvent(true)
                     }
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                         parent.requestDisallowInterceptTouchEvent(false)
                     }
                 }
-                false // 继续传递给 onClickListener
+                false // Tiếp tục chuyển cho onClickListener
             }
             setOnClickListener { onClick() }
         }
     }
 
     /**
-     * 创建紧凑内容区域 - 动态适配参数数量（支持8-11参数）
-     * 根据实际传入的 sections 中的参数数量动态显示，避免空白占位符
+     * Tạo vùng nội dung thu gọn - Tự động thích ứng với số lượng thông số (hỗ trợ 8-11 thông số)
+     * Hiển thị động dựa trên số lượng thông số trong sections thực tế truyền vào, tránh khoảng trống
      */
     private fun createCompactContentArea(sections: List<PresetSection>): LinearLayout {
-        // 提取实际存在的参数（过滤掉无效的"-"）
+        // Trích xuất các thông số tồn tại thực tế (lọc bỏ "-" không hợp lệ)
         val paramData = extractDynamicParams(sections)
         val actualParamCount = paramData.size
 
@@ -626,11 +626,11 @@ class FloatingWindowService : Service() {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                dpToPx(80) // 参数区域高度保持 80dp
+                dpToPx(80) // Chiều cao vùng thông số duy trì 80dp
             )
             setPadding(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4))
 
-            // 第一行：参数值（带索引 Tag）
+            // Dòng 1: Giá trị thông số (có chỉ số Tag)
             val valuesRow = LinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(
@@ -640,14 +640,14 @@ class FloatingWindowService : Service() {
                 )
                 gravity = Gravity.CENTER_VERTICAL
 
-                // 只显示实际存在的参数值
+                // Chỉ hiển thị giá trị thông số thực tế tồn tại
                 paramData.forEachIndexed { index, (value, _) ->
                     addView(createCompactValueCell(value, index))
                 }
             }
             addView(valuesRow)
 
-            // 分割线
+            // Đường phân cách
             addView(View(context).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -656,7 +656,7 @@ class FloatingWindowService : Service() {
                 setBackgroundColor(Color.parseColor("#20FFFFFF"))
             })
 
-            // 第二行：图标（使用 Iconfont 或文字标签）
+            // Dòng 2: Biểu tượng (sử dụng Iconfont hoặc nhãn chữ)
             val iconsRow = LinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(
@@ -666,7 +666,7 @@ class FloatingWindowService : Service() {
                 )
                 gravity = Gravity.CENTER_VERTICAL
 
-                // 只显示实际存在的参数对应的图标
+                // Chỉ hiển thị biểu tượng tương ứng với thông số thực tế tồn tại
                 paramData.forEach { (_, iconCode) ->
                     addView(createCompactIconCell(iconCode))
                 }

@@ -3,27 +3,27 @@ package com.silas.omaster.util
 import com.silas.omaster.BuildConfig
 
 /**
- * 版本信息管理工具
- * 从 BuildConfig 自动读取版本号，避免多处修改
+ * Công cụ quản lý thông tin phiên bản
+ * Tự động đọc số phiên bản từ BuildConfig, tránh sửa đổi nhiều nơi
  */
 object VersionInfo {
 
     /**
-     * 对外显示版本号，例如 "1.1.0"
-     * 对应 build.gradle.kts 中的 versionName
+     * Hiển thị số phiên bản ra bên ngoài, ví dụ "1.1.0"
+     * Tương ứng với versionName trong build.gradle.kts
      */
     val VERSION_NAME: String = BuildConfig.VERSION_NAME
 
     /**
-     * 内部版本号，用于更新检查
-     * 从 versionName 计算：主版本*10000 + 次版本*100 + 修订版本
-     * 例如：1.1.0 -> 10100, 1.0.3 -> 10003
+     * Số phiên bản nội bộ, dùng để kiểm tra cập nhật
+     * Tính từ versionName: Phiên bản chính*10000 + Phiên bản phụ*100 + Phiên bản sửa đổi
+     * Ví dụ: 1.1.0 -> 10100, 1.0.3 -> 10003
      */
     val VERSION_CODE: Int = parseVersionCode(VERSION_NAME)
 
     /**
-     * 计算版本号对应的数字值
-     * 用于与 GitHub release 的版本比较
+     * Tính giá trị số tương ứng với số phiên bản
+     * Dùng để so sánh phiên bản với GitHub release
      */
     fun parseVersionCode(versionName: String): Int {
         val parts = versionName.split(".")

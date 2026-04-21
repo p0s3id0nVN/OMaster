@@ -19,19 +19,19 @@ import java.net.URL
 import com.silas.omaster.R
 
 /**
- * 更新检查工具
- * 支持 GitHub 和 Gitee 双渠道更新检查
+ * Công cụ kiểm tra cập nhật
+ * Hỗ trợ kiểm tra cập nhật hai kênh GitHub và Gitee
  */
 object UpdateChecker {
 
     private const val TAG = "UpdateChecker"
 
-    // GitHub 配置
+    // Cấu hình GitHub
     private const val GITHUB_OWNER = "iCurrer"
     private const val GITHUB_REPO = "OMaster"
     private const val GITHUB_API_URL = "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/latest"
 
-    // Gitee 配置
+    // Cấu hình Gitee
     private const val GITEE_OWNER = "qiublog"
     private const val GITEE_REPO = "OMaster"
     private const val GITEE_API_URL = "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases/latest"
@@ -45,11 +45,11 @@ object UpdateChecker {
     )
 
     /**
-     * 检查更新（根据渠道选择）
-     * @param context 上下文
-     * @param currentVersionCode 当前版本号
-     * @param channel 更新渠道，默认 Gitee
-     * @return 更新信息，失败返回 null
+     * Kiểm tra cập nhật (chọn theo kênh)
+     * @param context Ngữ cảnh
+     * @param currentVersionCode Số phiên bản hiện tại
+     * @param channel Kênh cập nhật, mặc định Gitee
+     * @return Thông tin cập nhật, trả về null nếu thất bại
      */
     suspend fun checkUpdate(
         context: Context,
@@ -63,21 +63,21 @@ object UpdateChecker {
     }
 
     /**
-     * Gitee 更新检查
+     * Kiểm tra cập nhật Gitee
      */
     private suspend fun checkGiteeUpdate(context: Context, currentVersionCode: Int): UpdateInfo? {
         return checkUpdateFromApi(context, currentVersionCode, GITEE_API_URL, isGitee = true)
     }
 
     /**
-     * GitHub 更新检查
+     * Kiểm tra cập nhật GitHub
      */
     private suspend fun checkGithubUpdate(context: Context, currentVersionCode: Int): UpdateInfo? {
         return checkUpdateFromApi(context, currentVersionCode, GITHUB_API_URL, isGitee = false)
     }
 
     /**
-     * 通用 API 检查逻辑
+     * Logic kiểm tra API chung
      */
     private fun checkUpdateFromApi(
         context: Context,
@@ -92,7 +92,7 @@ object UpdateChecker {
                 requestMethod = "GET"
                 connectTimeout = 15000
                 readTimeout = 15000
-                // GitHub 需要特殊请求头
+                // GitHub cần header yêu cầu đặc biệt
                 if (!isGitee) {
                     setRequestProperty("Accept", "application/vnd.github.v3+json")
                 }
@@ -106,13 +106,13 @@ object UpdateChecker {
                 val versionName = tagName.removePrefix("v")
                 val versionCode = VersionInfo.parseVersionCode(versionName)
 
-                // 获取 app-universal-release.apk 下载链接
+                // Nhận liên kết tải xuống app-universal-release.apk
                 val assets = json.getJSONArray("assets")
                 var downloadUrl = ""
                 for (i in 0 until assets.length()) {
                     val asset = assets.getJSONObject(i)
                     val assetName = asset.getString("name")
-                    // 两个渠道都使用固定文件名
+                    // Cả hai kênh đều sử dụng tên file cố định
                     if (assetName == "app-universal-release.apk") {
                         downloadUrl = asset.getString("browser_download_url")
                         break
@@ -129,29 +129,29 @@ object UpdateChecker {
                     isNewer = versionCode > currentVersionCode && downloadUrl.isNotEmpty()
                 )
             } else {
-                Log.e(TAG, "检查更新失败，HTTP 状态码: ${connection.responseCode}")
+                Log.e(TAG, "Kiểm tra cập nhật thất bại, mã trạng thái HTTP: ${connection.responseCode}")
                 return null
             }
         } catch (e: Exception) {
-            Log.e(TAG, "检查更新出错 [${if (isGitee) "Gitee" else "GitHub"}]", e)
+            Log.e(TAG, "Lỗi kiểm tra cập nhật [${if (isGitee) "Gitee" else "GitHub"}]", e)
             return null
         }
     }
 
     /**
-     * 使用系统 DownloadManager 下载并安装
-     * @return 下载任务 ID，用于查询进度
+     * Sử dụng DownloadManager của hệ thống để tải xuống và cài đặt
+     * @return ID tác vụ tải xuống, dùng để truy vấn tiến trình
      */
     fun downloadAndInstall(context: Context, downloadUrl: String, versionName: String): Long {
         val fileName = "app-universal-release.apk"
 
-        // 清理旧文件
+        // Dọn dẹp file cũ
         val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         File(downloadDir, fileName).delete()
 
         val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
-            setTitle("OMaster 更新")
-            setDescription("正在下载 v$versionName...")
+            setTitle("Cập nhật OMaster")
+            setDescription("Đang tải xuống v$versionName...")
             setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, fileName)
             setAllowedOverMetered(true)
@@ -163,8 +163,8 @@ object UpdateChecker {
     }
 
     /**
-     * 查询下载进度
-     * @return Pair<下载状态, 进度百分比> 状态：1=等待中, 2=下载中, 4=完成, 8=失败, 16=暂停
+     * Truy vấn tiến trình tải xuống
+     * @return Pair<Trạng thái tải xuống, Phần trăm tiến trình> Trạng thái: 1=Đang chờ, 2=Đang tải, 4=Hoàn thành, 8=Thất bại, 16=Tạm dừng
      */
     fun queryDownloadProgress(context: Context, downloadId: Long): Pair<Int, Int> {
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -204,7 +204,7 @@ object UpdateChecker {
     }
 
     /**
-     * 取消下载
+     * Hủy tải xuống
      */
     fun cancelDownload(context: Context, downloadId: Long) {
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -213,7 +213,7 @@ object UpdateChecker {
 }
 
 /**
- * 下载完成广播接收器（静态注册）
+ * Bộ nhận thông báo tải xuống hoàn tất (đăng ký tĩnh)
  */
 class DownloadCompleteReceiver : BroadcastReceiver() {
 
@@ -228,21 +228,21 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
         if (cursor.moveToFirst()) {
             val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
             if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                // 获取本地文件路径
+                // Lấy đường dẫn file cục bộ
                 val localUriString = cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
-                Log.d("DownloadReceiver", "下载完成，URI: $localUriString")
+                Log.d("DownloadReceiver", "Tải xuống hoàn tất, URI: $localUriString")
 
                 val apkFile = if (localUriString != null) {
                     val localUri = Uri.parse(localUriString)
                     if (localUri.scheme == "file") {
-                        // 直接是文件路径
+                        // Là đường dẫn file trực tiếp
                         File(localUri.path!!)
                     } else {
-                        // content:// URI，尝试通过 ContentResolver 获取真实路径
+                        // content:// URI, thử lấy đường dẫn thực qua ContentResolver
                         getFileFromContentUri(context, localUri)
                     }
                 } else {
-                    // 备用方案：直接找已知文件名
+                    // Phương án dự phòng: tìm trực tiếp tên file đã biết
                     val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
                     File(downloadDir, "app-universal-release.apk")
                 }
@@ -250,11 +250,11 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
                 if (apkFile != null && apkFile.exists()) {
                     installApk(context, apkFile)
                 } else {
-                    Log.e("DownloadReceiver", "APK 文件不存在")
+                    Log.e("DownloadReceiver", "File APK không tồn tại")
                 }
             } else if (status == DownloadManager.STATUS_FAILED) {
                 val reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON))
-                Log.e("DownloadReceiver", "下载失败，错误码: $reason")
+                Log.e("DownloadReceiver", "Tải xuống thất bại, mã lỗi: $reason")
             }
         }
         cursor.close()
@@ -262,15 +262,15 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
 
     private fun getFileFromContentUri(context: Context, uri: Uri): File? {
         return try {
-            // 对于 DownloadManager 下载的文件，通常可以直接从 URI 解析
+            // Đối với file tải xuống qua DownloadManager, thường có thể phân tích trực tiếp từ URI
             if (uri.path?.contains("/Android/data/") == true) {
-                // 提取真实路径
+                // Trích xuất đường dẫn thực
                 val path = uri.path
                 if (path != null) {
                     File(path)
                 } else null
             } else {
-                // 备用：通过 ContentResolver 查询
+                // Dự phòng: truy vấn qua ContentResolver
                 context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
                     if (cursor.moveToFirst()) {
                         val displayNameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
@@ -283,14 +283,14 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
                 }
             }
         } catch (e: Exception) {
-            Log.e("DownloadReceiver", "解析文件路径失败", e)
+            Log.e("DownloadReceiver", "Phân tích đường dẫn file thất bại", e)
             null
         }
     }
 
     private fun installApk(context: Context, apkFile: File) {
         try {
-            Log.d("DownloadReceiver", "准备安装 APK: ${apkFile.absolutePath}, 大小: ${apkFile.length()}")
+            Log.d("DownloadReceiver", "Chuẩn bị cài đặt APK: ${apkFile.absolutePath}, Kích thước: ${apkFile.length()}")
 
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 val apkUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -307,15 +307,15 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
                 }
             }
 
-            // 检查是否有应用可以处理这个 intent
+            // Kiểm tra xem có ứng dụng nào có thể xử lý intent này không
             if (intent.resolveActivity(context.packageManager) != null) {
                 context.startActivity(intent)
-                Log.d("DownloadReceiver", "已启动安装界面")
+                Log.d("DownloadReceiver", "Đã khởi chạy giao diện cài đặt")
             } else {
-                Log.e("DownloadReceiver", "没有找到可以处理安装的应用")
+                Log.e("DownloadReceiver", "Không tìm thấy ứng dụng có thể xử lý cài đặt")
             }
         } catch (e: Exception) {
-            Log.e("DownloadReceiver", "安装失败: ${e.message}", e)
+            Log.e("DownloadReceiver", "Cài đặt thất bại: ${e.message}", e)
         }
     }
 }
