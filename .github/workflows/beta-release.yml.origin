@@ -2,26 +2,26 @@ name: Build Beta & Release
 
 on:
   push:
-    branches: [ main, master ]          # Có thể điều chỉnh nhánh theo nhu cầu
+    branches: [ main, master ]          # 可根据需要调整分支
   pull_request:
-    branches: [ main, master ]          # Tuỳ chọn, thêm xác minh PR
+    branches: [ main, master ]          # 可选，增加 PR 验证
   workflow_dispatch:
     inputs:
       create_release:
-        description: 'Tạo Release (Cần điền thẻ sau khi chọn)'
+        description: '创建 Release (勾选后需填写标签)'
         required: false
         default: false
         type: boolean
       release_tag:
-        description: 'Thẻ Release (Ví dụ: v1.2.3)'
+        description: 'Release 标签 (例如: v1.2.3)'
         required: false
         type: string
       release_name:
-        description: 'Tên Release (Để trống sẽ sử dụng thẻ)'
+        description: 'Release 名称 (留空则使用标签)'
         required: false
         type: string
       prerelease:
-        description: 'Đánh dấu là phiên bản phát hành trước (prerelease)'
+        description: '标记为预发布版本'
         required: false
         default: false
         type: boolean
@@ -109,7 +109,7 @@ jobs:
     if: github.event.inputs.create_release == 'true' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
-      contents: write          # Cần quyền để đẩy thẻ và tạo Release
+      contents: write          # 需要推送标签和创建 Release
 
     steps:
       - name: Checkout repository (with full history)
@@ -121,15 +121,15 @@ jobs:
       - name: Validate release inputs
         run: |
           if [[ -z "${{ github.event.inputs.release_tag }}" ]]; then
-            echo "❌ Lỗi: Phải cung cấp release_tag khi tạo Release"
+            echo "❌ 错误: 创建 Release 时必须提供 release_tag"
             exit 1
           fi
           if [[ ! "${{ github.event.inputs.release_tag }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-            echo "❌ Lỗi: Định dạng thẻ không chính xác, vui lòng sử dụng định dạng vX.Y.Z (ví dụ: v1.2.3)"
+            echo "❌ 错误: 标签格式不正确，请使用 vX.Y.Z 格式（例如 v1.2.3）"
             exit 1
           fi
           if git tag --list | grep -q "^${{ github.event.inputs.release_tag }}$"; then
-            echo "❌ Lỗi: Thẻ ${{ github.event.inputs.release_tag }} đã tồn tại"
+            echo "❌ 错误: 标签 ${{ github.event.inputs.release_tag }} 已存在"
             exit 1
           fi
 
@@ -148,13 +148,13 @@ jobs:
         run: |
           PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
           if [ -z "$PREVIOUS_TAG" ]; then
-            echo "📝 Phiên bản đầu tiên, tạo nhật ký cập nhật cho tất cả các commit"
+            echo "📝 首个版本，生成所有提交的更新日志"
             git-cliff --unreleased --output RELEASE_NOTES.md
           else
-            echo "📝 Tạo nhật ký cập nhật từ $PREVIOUS_TAG đến commit hiện tại"
+            echo "📝 生成从 $PREVIOUS_TAG 到当前提交的更新日志"
             git-cliff ${PREVIOUS_TAG}..HEAD --unreleased --output RELEASE_NOTES.md
           fi
-          echo "📋 Mô tả Release đã tạo："
+          echo "📋 生成的 Release 说明："
           cat RELEASE_NOTES.md
 
       - name: Create and push tag
@@ -167,11 +167,11 @@ jobs:
       #     git-cliff --output CHANGELOG.md
       #     if [ -n "$(git status --porcelain CHANGELOG.md)" ]; then
       #       git add CHANGELOG.md
-      #       git commit -m "docs: Cập nhật CHANGELOG.md thành ${{ github.event.inputs.release_tag }}"
+      #       git commit -m "docs: 更新 CHANGELOG.md 为 ${{ github.event.inputs.release_tag }}"
       #       git push origin HEAD:${GITHUB_REF#refs/heads/}
-      #       echo "✅ CHANGELOG.md đã được cập nhật và đẩy lên"
+      #       echo "✅ CHANGELOG.md 已更新并推送"
       #     else
-      #       echo "ℹ️ CHANGELOG.md không có thay đổi, bỏ qua commit"
+      #       echo "ℹ️ CHANGELOG.md 无变化，跳过提交"
       #     fi
 
       - name: Download APK artifacts
@@ -194,8 +194,8 @@ jobs:
 
       - name: Release summary
         run: |
-          echo "🎉 Đã tạo bản nháp Release thành công!"
-          echo "  Thẻ: ${{ github.event.inputs.release_tag }}"
-          echo "  Tên: ${{ github.event.inputs.release_name || github.event.inputs.release_tag }}"
-          echo "  Phát hành trước: ${{ github.event.inputs.prerelease }}"
-          echo "🔗 Địa chỉ xem: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.inputs.release_tag }}"
+          echo "🎉 Release 草稿创建成功！"
+          echo "  标签: ${{ github.event.inputs.release_tag }}"
+          echo "  名称: ${{ github.event.inputs.release_name || github.event.inputs.release_tag }}"
+          echo "  预发布: ${{ github.event.inputs.prerelease }}"
+          echo "🔗 查看地址: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.inputs.release_tag }}"
