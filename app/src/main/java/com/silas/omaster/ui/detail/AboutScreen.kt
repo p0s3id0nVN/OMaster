@@ -132,7 +132,7 @@ fun AboutScreen(
         }
     }
 
-    // 滚动到顶/底部震感
+    // Cảm giác rung khi cuộn đến đầu/cuối
     var lastScrollValue by remember { mutableIntStateOf(0) }
     var hasHapticAtTop by remember { mutableStateOf(false) }
     var hasHapticAtBottom by remember { mutableStateOf(false) }
@@ -161,12 +161,12 @@ fun AboutScreen(
     var checkError by remember { mutableStateOf<String?>(null) }
     var lastCheckTime by remember { mutableStateOf<Long?>(null) }
     
-    // 下载进度相关状态
+    // Trạng thái liên quan đến tiến trình tải xuống
     var downloadId by remember { mutableStateOf<Long>(-1L) }
     var downloadProgress by remember { mutableIntStateOf(0) }
     var isDownloading by remember { mutableStateOf(false) }
 
-    // 获取更新渠道（使用 ConfigCenter）
+    // Lấy kênh cập nhật (sử dụng ConfigCenter)
     val config = remember { ConfigCenter.getInstance(context) }
     val updateChannel by config.updateChannelFlow.collectAsState()
 
@@ -275,7 +275,7 @@ fun AboutScreen(
                 }
             )
             
-            // 监听下载进度
+            // Theo dõi tiến trình tải xuống
             LaunchedEffect(isDownloading, downloadId) {
                 if (isDownloading && downloadId != -1L) {
                     while (isActive) {
@@ -296,7 +296,7 @@ fun AboutScreen(
                         }
                         
                         if (!isDownloading) break
-                        delay(500) // 每500ms查询一次
+                        delay(500) // Truy vấn 500ms một lần
                     }
                 }
             }
@@ -321,7 +321,7 @@ fun AboutScreen(
 
             FooterSection(context, onNavigateToPrivacyPolicy, onNavigateToOpenSourceLicense)
 
-            // 底部额外留白，避免内容太靠下
+            // Để lại khoảng trống phụ ở dưới cùng, tránh nội dung quá sát phía dưới
             Spacer(modifier = Modifier.height(48.dp))
         }
     }
@@ -335,7 +335,7 @@ private fun AppTitleSection(currentVersionName: String) {
             .padding(vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 应用名称（O 使用主题色）
+        // Tên ứng dụng (Chữ O sử dụng màu chủ đề)
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
@@ -351,7 +351,7 @@ private fun AppTitleSection(currentVersionName: String) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 副标题
+        // Phụ đề
         Text(
             text = stringResource(R.string.app_slogan),
             style = MaterialTheme.typography.bodyLarge,
@@ -360,7 +360,7 @@ private fun AppTitleSection(currentVersionName: String) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 版本号标签
+        // Nhãn số phiên bản
         Box(
             modifier = Modifier
                 .border(
@@ -417,7 +417,7 @@ private fun UpdateCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // 顶部：图标 + 版本号 + 刷新
+            // Phần đầu: Biểu tượng + Số phiên bản + Làm mới
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -479,7 +479,7 @@ private fun UpdateCard(
                 }
             }
 
-            // 状态显示
+            // Hiển thị trạng thái
             Box(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -530,7 +530,7 @@ private fun UpdateCard(
                                         }
                                     }
                                     if (isDownloading) {
-                                        // 显示下载进度
+                                        // Hiển thị tiến trình tải xuống
                                         Column(
                                             horizontalAlignment = Alignment.End
                                         ) {
@@ -549,7 +549,7 @@ private fun UpdateCard(
                                             )
                                             Spacer(modifier = Modifier.height(4.dp))
                                             Text(
-                                                text = "取消",
+                                                text = "Hủy",
                                                 style = MaterialTheme.typography.labelSmall,
                                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                                                 modifier = Modifier.clickable { onCancelDownload() }
@@ -572,11 +572,11 @@ private fun UpdateCard(
                                     }
                                 }
                                 
-                                // 显示更新日志
+                                // Hiển thị nhật ký cập nhật
                                 if (updateInfo.releaseNotes.isNotBlank()) {
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(
-                                        text = "更新内容",
+                                        text = "Nội dung cập nhật",
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Medium
@@ -793,7 +793,7 @@ private fun CreditsCard(context: android.content.Context) {
             modifier = Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 标题
+            // Tiêu đề
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -812,7 +812,7 @@ private fun CreditsCard(context: android.content.Context) {
                 )
             }
 
-            // 开发者区域
+            // Khu vực nhà phát triển
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -836,7 +836,7 @@ private fun CreditsCard(context: android.content.Context) {
                 }
             }
 
-            // 素材提供区域
+            // Khu vực cung cấp tài liệu
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -846,7 +846,7 @@ private fun CreditsCard(context: android.content.Context) {
                     color = Color.White.copy(alpha = 0.5f)
                 )
 
-                // 贡献者标签云
+                // Đám mây nhãn người đóng góp
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -968,7 +968,7 @@ private fun ProjectCard(context: android.content.Context) {
                 }
                 Column {
                     Text(
-                        text = "项目地址",
+                        text = "Địa chỉ dự án",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -1002,16 +1002,16 @@ private fun QQGroupCard(context: android.content.Context) {
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable {
-                // 群号
+                // Số nhóm
                 val groupId = "1083543279"
                 
-                // 尝试使用URL Scheme打开QQ群
+                // Thử sử dụng URL Scheme để mở nhóm QQ
                 val schemes = listOf(
-                    // 方式1：使用腾讯官方API（推荐）
+                    // Cách 1: Sử dụng API chính thức của Tencent (Khuyến nghị)
                     "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=$groupId&card_type=group&source=qrcode",
-                    // 方式2：使用QQ群加群链接（兼容旧版）
+                    // Cách 2: Sử dụng liên kết tham gia nhóm QQ (Tương thích với phiên bản cũ)
                     "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fc%2Fcgi-bin%2Fqm%2Fqr%3Fk%3D$groupId",
-                    // 方式3：使用简化版scheme
+                    // Cách 3: Sử dụng scheme phiên bản đơn giản
                     "mqq://card/show_pslcard?src_type=internal&version=1&uin=$groupId&card_type=group"
                 )
 
@@ -1021,27 +1021,27 @@ private fun QQGroupCard(context: android.content.Context) {
                         try {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(scheme))
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            // 检查是否有应用可以处理这个intent
+                            // Kiểm tra xem có ứng dụng nào có thể xử lý intent này không
                             if (intent.resolveActivity(context.packageManager) != null) {
                                 context.startActivity(intent)
                                 opened = true
                                 break
                             }
                         } catch (e: Exception) {
-                            // 尝试下一个方式
+                            // Thử cách tiếp theo
                         }
                     }
                 }
 
-                // 如果所有scheme都失败，使用网页版链接（浏览器会提示打开QQ）
+                // Nếu tất cả các scheme đều thất bại, sử dụng liên kết phiên bản web (Trình duyệt sẽ nhắc mở QQ)
                 if (!opened) {
                     try {
                         val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://qm.qq.com/cgi-bin/qm/qr?k=$groupId&jump_from=webapi"))
                         webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         context.startActivity(webIntent)
                     } catch (e: Exception) {
-                        // 如果浏览器也打不开，提示用户
-                        android.widget.Toast.makeText(context, "无法打开QQ群，请检查是否安装QQ", android.widget.Toast.LENGTH_SHORT).show()
+                        // Nếu trình duyệt cũng không mở được, hãy nhắc người dùng
+                        android.widget.Toast.makeText(context, "Không thể mở nhóm QQ, vui lòng kiểm tra xem QQ đã được cài đặt chưa", android.widget.Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -1079,14 +1079,14 @@ private fun QQGroupCard(context: android.content.Context) {
                 }
                 Column {
                     Text(
-                        text = "加入QQ群",
+                        text = "Tham gia nhóm QQ",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "群号: 1083543279",
+                        text = "Số nhóm: 1083543279",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White.copy(alpha = 0.5f)
                     )

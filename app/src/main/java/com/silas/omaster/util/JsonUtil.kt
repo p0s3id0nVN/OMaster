@@ -13,19 +13,19 @@ import java.text.Normalizer
 import java.util.Locale
 
 /**
- * 【内置预设加载工具类 - App 更新时会重新加载】
- * JSON 工具类 - 负责从 assets 目录加载和解析预设数据
+ * 【Lớp công cụ tải preset tích hợp - Ứng dụng sẽ tải lại khi cập nhật】
+ * Lớp công cụ JSON - Chịu trách nhiệm tải và phân tích dữ liệu preset từ thư mục assets
  * 
- * 【重要区别】
- * 此文件管理的是内置预设（随 App 一起打包的数据）
- * 与 CustomPresetManager 管理的用户数据完全不同
+ * 【Sự khác biệt quan trọng】
+ * Tệp này quản lý các preset tích hợp (dữ liệu được đóng gói cùng với Ứng dụng)
+ * Hoàn toàn khác với dữ liệu người dùng do CustomPresetManager quản lý
  * 
- * 【App 更新行为】
- * - App 更新时，assets/presets.json 会被新版本覆盖
- * - 这是正常的，因为内置预设应该随 App 更新而更新
- * - 用户数据（SharedPreferences）完全不受影响
+ * 【Hành vi cập nhật ứng dụng】
+ * - Khi cập nhật Ứng dụng, assets/presets.json sẽ bị ghi đè bởi phiên bản mới
+ * - Điều này là bình thường, vì preset tích hợp nên được cập nhật cùng với cập nhật Ứng dụng
+ * - Dữ liệu người dùng (SharedPreferences) hoàn toàn không bị ảnh hưởng
  * 
- * 【数据流向】
+ * 【Luồng dữ liệu】
  * assets/presets.json -> JsonUtil.loadPresets() -> PresetRepository -> UI 展示
  */
 object JsonUtil {
@@ -33,15 +33,15 @@ object JsonUtil {
     private val gson = Gson()
     
     /**
-     * 【内存缓存】
-     * 缓存已加载的预设列表，避免重复解析 JSON
-     * 注意：App 重启后缓存会清空，需要重新加载
+     * 【Bộ nhớ cache】
+     * Lưu bộ nhớ đệm danh sách preset đã tải, tránh phân tích JSON lặp lại
+     * Lưu ý: Sau khi khởi động lại Ứng dụng, bộ đệm sẽ bị xóa và cần tải lại
      */
     private var cachedPresets: List<MasterPreset>? = null
 
     /**
-     * 当前加载的预设版本
-     * 默认为 2 (当前版本)
+     * Phiên bản preset đang được tải
+     * Mặc định là 2 (phiên bản hiện tại)
      */
     var currentPresetsVersion: Int = 2
         private set
@@ -50,7 +50,7 @@ object JsonUtil {
     private const val KEY_MIGRATION_DONE = "migration_done"
 
     /**
-     * 检查是否已经完成数据迁移
+     * Kiểm tra xem đã hoàn tất di chuyển dữ liệu chưa
      */
     private fun isMigrationDone(context: Context): Boolean {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -58,7 +58,7 @@ object JsonUtil {
     }
 
     /**
-     * 标记数据迁移已完成
+     * Đánh dấu di chuyển dữ liệu đã hoàn tất
      */
     private fun setMigrationDone(context: Context) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -68,34 +68,34 @@ object JsonUtil {
     }
 
     /**
-     * 【内置预设加载方法】
-     * 从 assets 目录加载 presets.json 文件
+     * 【Phương pháp tải preset tích hợp】
+     * Tải tệp presets.json từ thư mục assets
      * 
-     * 【关键说明】
-     * 1. 文件位置：app/src/main/assets/presets.json
-     * 2. 此文件随 App 打包，用户无法修改
-     * 3. App 更新时，此文件会被新版本覆盖
-     * 4. 使用缓存避免重复解析
+     * 【Giải thích chính】
+     * 1. Vị trí tệp: app/src/main/assets/presets.json
+     * 2. Tệp này được đóng gói cùng với Ứng dụng, người dùng không thể sửa đổi
+     * 3. Khi cập nhật Ứng dụng, tệp này sẽ bị ghi đè bởi phiên bản mới
+     * 4. Sử dụng bộ đệm để tránh phân tích lặp lại
      * 
-     * @param context 应用上下文
-     * @param fileName JSON 文件名，默认为 "presets.json"
-     * @return 解析后的预设列表，如果加载失败则返回空列表
+     * @param context Ngữ cảnh ứng dụng
+     * @param fileName Tên tệp JSON, mặc định là "presets.json"
+     * @return Danh sách preset đã phân tích, trả về danh sách trống nếu tải thất bại
      */
     fun loadPresets(context: Context, fileName: String = "presets.json"): List<MasterPreset> {
-        // 如果已有缓存，直接返回缓存（性能优化）
+        // Nếu đã có bộ đệm, trả về trực tiếp từ bộ đệm (tối ưu hóa hiệu suất)
         cachedPresets?.let {
             Logger.d("JsonUtil", "Returning cached presets, count: ${it.size}")
             return it
         }
 
-        // 特殊逻辑：检查是否存在旧版的远程更新文件（presets_remote.json）
-        // 如果存在且未完成迁移，说明用户是从旧版本升级上来的，需要提示迁移
+        // Logic đặc biệt: Kiểm tra xem có tồn tại tệp cập nhật từ xa phiên bản cũ (presets_remote.json) không
+        // Nếu tồn tại và chưa hoàn tất di chuyển, có nghĩa là người dùng đang nâng cấp từ phiên bản cũ và cần được nhắc nhở di chuyển
         val oldRemoteFile = java.io.File(context.filesDir, "presets_remote.json")
         if (oldRemoteFile.exists() && !isMigrationDone(context)) {
             Logger.d("JsonUtil", "Old remote presets file detected, triggering migration")
             currentPresetsVersion = 1
         } else {
-            // 如果不存在旧文件或已完成迁移，默认设为当前最新版本
+            // Nếu không tồn tại tệp cũ hoặc đã hoàn tất di chuyển, mặc định được đặt thành phiên bản mới nhất hiện tại
             currentPresetsVersion = 2
         }
 
@@ -104,15 +104,15 @@ object JsonUtil {
         val config = ConfigCenter.getInstance(context)
         val subscriptions = config.subscriptionsFlow.value
 
-        // 1. 加载所有开启的订阅预设
+        // 1. Tải tất cả các preset đăng ký đã bật
         try {
             val enabledSubs = subscriptions.filter { it.isEnabled }
 
             for (sub in enabledSubs) {
-                // 检查是否存在下载的订阅文件
+                // Kiểm tra xem tệp đăng ký đã tải xuống có tồn tại không
                 val subFile = java.io.File(context.filesDir, config.getSubscriptionFileName(sub.url))
                 if (subFile.exists()) {
-                    // 如果存在订阅文件，加载它
+                    // Nếu tệp đăng ký tồn tại, hãy tải nó
                     try {
                         subFile.inputStream().use { inputStream ->
                             InputStreamReader(inputStream).use { reader ->
@@ -120,8 +120,8 @@ object JsonUtil {
                                 val presetList: PresetList? = gson.fromJson(reader, presetListType)
                                 if (presetList != null) {
                                     val processed = processPresets(presetList.presets ?: emptyList(), sub.url)
-                                    // 注意：不再从订阅文件读取 version 覆盖 currentPresetsVersion
-                                    // currentPresetsVersion 只用于检测 presets_remote.json 旧文件迁移
+                                    // Lưu ý: Không còn đọc phiên bản từ tệp đăng ký để ghi đè currentPresetsVersion
+                                    // currentPresetsVersion chỉ được sử dụng để phát hiện di chuyển tệp cũ presets_remote.json
                                     allPresets.addAll(processed)
                                 }
                             }
@@ -130,7 +130,7 @@ object JsonUtil {
                         Logger.e("JsonUtil", "Failed to load sub file: ${sub.url}", e)
                     }
                 } else if (sub.url == SubscriptionConfig.DEFAULT_PRESET_URL) {
-                    // 如果是官方订阅但文件不存在，则从 assets 加载
+                    // Nếu là đăng ký chính thức nhưng tệp không tồn tại, hãy tải từ assets
                     try {
                         context.assets.open(fileName).use { inputStream ->
                             InputStreamReader(inputStream).use { reader ->
@@ -152,7 +152,7 @@ object JsonUtil {
             Logger.e("JsonUtil", "Failed to load presets from subscriptions", e)
         }
 
-        // 如果没有任何预设，返回空
+        // Nếu không có bất kỳ preset nào, trả về rỗng
         if (allPresets.isEmpty()) return emptyList()
 
         cachedPresets = allPresets
@@ -162,7 +162,7 @@ object JsonUtil {
 
     private fun processPresets(presets: List<MasterPreset>, sourceId: String): List<MasterPreset> {
         return presets.mapIndexed { index, preset ->
-            // 对于官方内置预设，无论从 assets 还是远程加载，都保持一致的 ID
+            // Đối với preset tích hợp chính thức, bất kể tải từ assets hay từ xa, đều giữ ID nhất quán
             val effectiveSourceId = if (sourceId == "asset" || sourceId == SubscriptionConfig.DEFAULT_PRESET_URL) {
                 "official"
             } else {
@@ -170,11 +170,11 @@ object JsonUtil {
             }
 
             if (preset.id == null) {
-                // 如果没有 ID，基于来源和索引生成
+                // Nếu không có ID, hãy tạo dựa trên nguồn và chỉ mục
                 val newId = generatePresetId("${effectiveSourceId}_${preset.name}", index)
                 preset.copy(id = newId)
             } else {
-                // 如果有 ID，为了避免不同订阅间的冲突，可以加个前缀（如果是远程订阅）
+                // Nếu có ID, để tránh xung đột giữa các đăng ký khác nhau, có thể thêm tiền tố (nếu là đăng ký từ xa)
                 if (effectiveSourceId != "official") {
                     preset.copy(id = "sub_${effectiveSourceId.hashCode().toString(16)}_${preset.id}")
                 } else {
@@ -185,51 +185,51 @@ object JsonUtil {
     }
 
     /**
-     * 【ID 生成算法】
-     * 基于预设名称生成简洁的 ID
-     * 例如："富士胶片" -> "fuji_film_0", "蓝调时刻" -> "blue_hour_1"
+     * 【Thuật toán tạo ID】
+     * Tạo ID ngắn gọn dựa trên tên preset
+     * Ví dụ: "富士胶片" -> "fuji_film_0", "蓝调时刻" -> "blue_hour_1"
      * 
-     * 【算法步骤】
-     * 1. 移除音调符号（拼音化）
-     * 2. 转换为小写
-     * 3. 替换非字母数字字符为下划线
-     * 4. 限制长度
-     * 5. 添加索引后缀避免重复
+     * 【Các bước thuật toán】
+     * 1. Xóa dấu thanh điệu (pinyin hóa)
+     * 2. Chuyển đổi thành chữ thường
+     * 3. Thay thế các ký tự không phải chữ và số bằng dấu gạch dưới
+     * 4. Giới hạn độ dài
+     * 5. Thêm hậu tố chỉ mục để tránh trùng lặp
      * 
-     * @param name 预设名称
-     * @param index 索引（用于处理重复名称）
-     * @return 生成的 ID
+     * @param name Tên preset
+     * @param index Chỉ mục (để xử lý tên trùng lặp)
+     * @return ID được tạo
      */
     private fun generatePresetId(name: String, index: Int): String {
-        // 1. 移除音调符号（拼音化）
+        // 1. Xóa dấu thanh điệu (pinyin hóa)
         val normalized = Normalizer.normalize(name, Normalizer.Form.NFD)
             .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
 
-        // 2. 转换为小写
+        // 2. Chuyển đổi thành chữ thường
         val lowerCase = normalized.lowercase(Locale.getDefault())
 
-        // 3. 替换非字母数字字符为下划线
+        // 3. Thay thế các ký tự không phải chữ và số bằng dấu gạch dưới
         val cleaned = lowerCase.replace(Regex("[^a-z0-9]+"), "_")
-            .trim('_')  // 移除首尾下划线
-            .replace(Regex("_+"), "_")  // 多个下划线合并为一个
+            .trim('_')  // Xóa dấu gạch dưới ở đầu và cuối
+            .replace(Regex("_+"), "_")  // Nhiều dấu gạch dưới hợp nhất thành một
 
-        // 4. 限制长度
+        // 4. Giới hạn độ dài
         val truncated = if (cleaned.length > 30) cleaned.substring(0, 30) else cleaned
 
-        // 5. 如果为空或太短，使用索引
+        // 5. Nếu trống hoặc quá ngắn, sử dụng chỉ mục
         val baseId = if (cleaned.length < 2) "preset_$index" else truncated
 
-        // 6. 添加索引后缀避免重复
+        // 6. Thêm hậu tố chỉ mục để tránh trùng lặp
         return "${baseId}_$index"
     }
 
     /**
-     * 【调试工具方法】
-     * 将预设列表转换为 JSON 字符串
-     * 用于调试或导出数据
+     * 【Phương pháp công cụ gỡ lỗi】
+     * Chuyển đổi danh sách preset thành chuỗi JSON
+     * Dùng để gỡ lỗi hoặc xuất dữ liệu
      * 
-     * @param presets 预设列表
-     * @return JSON 格式的字符串
+     * @param presets Danh sách preset
+     * @return Chuỗi định dạng JSON
      */
     fun presetsToJson(presets: List<MasterPreset>): String {
         return gson.toJson(PresetList(version = currentPresetsVersion, presets = presets))
@@ -244,7 +244,7 @@ object JsonUtil {
     }
 
     /**
-     * 删除远程预设文件（用于数据迁移）
+     * Xóa tệp preset từ xa (để di chuyển dữ liệu)
      */
     fun deleteRemotePresets(context: Context) {
         try {
@@ -253,7 +253,7 @@ object JsonUtil {
                 remoteFile.delete()
                 Logger.d("JsonUtil", "Deleted remote presets file for migration")
             }
-            // 标记迁移已完成，防止重复弹窗
+            // Đánh dấu di chuyển đã hoàn tất, ngăn cửa sổ bật lên lặp lại
             setMigrationDone(context)
             Logger.d("JsonUtil", "Migration marked as done")
             invalidateCache()

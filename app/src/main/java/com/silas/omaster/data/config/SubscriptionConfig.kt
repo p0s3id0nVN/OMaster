@@ -11,8 +11,8 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
- * 订阅配置管理（ConfigCenter 子模块）
- * 处理订阅列表的持久化和状态管理
+ * Quản lý cấu hình đăng ký (Mô-đun phụ ConfigCenter)
+ * Xử lý việc lưu trữ và quản lý trạng thái của danh sách đăng ký
  */
 internal class SubscriptionConfig(private val context: Context) {
 
@@ -56,7 +56,7 @@ internal class SubscriptionConfig(private val context: Context) {
         val defaultSubs = listOf(
             Subscription(
                 url = DEFAULT_PRESET_URL,
-                name = "OPPO / 一加 大师预设",
+                name = "Preset Master OPPO / OnePlus",
                 author = "@OMaster",
                 build = 4,
                 isEnabled = true,
@@ -65,7 +65,7 @@ internal class SubscriptionConfig(private val context: Context) {
             ),
             Subscription(
                 url = REALME_PRESET_URL,
-                name = "Realme GR预设",
+                name = "Preset Realme GR",
                 author = "@OMaster",
                 build = 1,
                 isEnabled = false,

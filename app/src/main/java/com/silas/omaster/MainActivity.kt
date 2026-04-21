@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var floatingWindowController: FloatingWindowController
 
     override fun attachBaseContext(newBase: Context?) {
-        // 在 Activity 创建前应用语言设置
+        // Áp dụng cài đặt ngôn ngữ trước khi Activity được tạo
         val context = newBase?.let { LanguageUtil.applyLanguage(it) }
         super.attachBaseContext(context)
     }
@@ -109,7 +109,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // 初始化并注册全局悬浮窗控制器
+        // Khởi tạo và đăng ký bộ điều khiển cửa sổ nổi toàn cục
         floatingWindowController = FloatingWindowController.getInstance(this)
         floatingWindowController.register()
 
@@ -152,7 +152,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // 注销悬浮窗控制器
+        // Hủy đăng ký bộ điều khiển cửa sổ nổi
         floatingWindowController.unregister()
     }
 }
@@ -166,7 +166,7 @@ fun WelcomeFlow(
     var showPrivacyPolicy by remember { mutableStateOf(false) }
     var showOpenSourceLicense by remember { mutableStateOf(false) }
 
-    // 处理系统返回键
+    // Xử lý phím quay lại của hệ thống
     androidx.activity.compose.BackHandler(enabled = showPrivacyPolicy || showOpenSourceLicense) {
         showPrivacyPolicy = false
         showOpenSourceLicense = false
@@ -213,16 +213,16 @@ fun MainApp(
     val repository = remember { PresetRepository.getInstance(context) }
     var showMigrationDialog by remember { mutableStateOf(false) }
 
-    // 检查是否需要数据迁移
+    // Kiểm tra xem có cần di chuyển dữ liệu không
     LaunchedEffect(Unit) {
-        // 先触发 loadPresets 来正确检测版本
-        // 使用 IO 线程避免阻塞 UI
+        // Đầu tiên kích hoạt loadPresets để phát hiện chính xác phiên bản
+        // Sử dụng luồng IO để tránh chặn UI
         withContext(Dispatchers.IO) {
             JsonUtil.loadPresets(context)
         }
         
-        // 现在 currentPresetsVersion 已经被正确设置
-        // 支持 version 2 和 3，只有旧版本 (version 1) 才需要迁移
+        // Bây giờ currentPresetsVersion đã được đặt chính xác
+        // Hỗ trợ version 2 và 3, chỉ phiên bản cũ (version 1) mới cần di chuyển
         if (JsonUtil.currentPresetsVersion == 1) {
             showMigrationDialog = true
         }
@@ -231,8 +231,8 @@ fun MainApp(
     if (showMigrationDialog) {
         AlertDialog(
             onDismissRequest = { /* Force user to decide */ },
-            title = { Text("数据结构更新") },
-            text = { Text("检测到预设数据版本过旧，需要迁移数据以支持新功能。\n\n点击“迁移数据”将重置内置预设（您的自定义预设和收藏不会丢失）。") },
+            title = { Text("Cập nhật cấu trúc dữ liệu") },
+            text = { Text("Phát hiện phiên bản dữ liệu preset quá cũ, cần di chuyển dữ liệu để hỗ trợ các chức năng mới.\n\nNhấp vào \"Di chuyển dữ liệu\" sẽ đặt lại các preset tích hợp (các preset tùy chỉnh và mục yêu thích của bạn sẽ không bị mất).") },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -241,7 +241,7 @@ fun MainApp(
                         showMigrationDialog = false
                     }
                 ) {
-                    Text("迁移数据")
+                    Text("Di chuyển dữ liệu")
                 }
             },
             dismissButton = {
@@ -264,13 +264,13 @@ fun MainApp(
 
     var isHomeScrollingUp by remember { mutableStateOf(true) }
     
-    // 用于触发 HomeScreen 刷新的状态
+    // Trạng thái dùng để kích hoạt làm mới HomeScreen
     var refreshTrigger by remember { mutableStateOf(0) }
     
-    // 读取高级 Glass 质感配置
+    // Đọc cấu hình kết cấu Glass cao cấp
     val usePremiumGlass by config.premiumGlassFlow.collectAsState()
 
-    // 底部导航栏页面顺序，用于决定切换动画方向
+    // Thứ tự trang thanh điều hướng dưới cùng, dùng để xác định hướng hiệu ứng chuyển đổi
     val mainRouteList = remember { listOf("Home", "Subscription", "About") }
     fun getNavIndex(route: String?): Int {
         return mainRouteList.indexOfFirst { route?.contains(it) == true }
@@ -286,14 +286,14 @@ fun MainApp(
                 val targetIndex = getNavIndex(targetState.destination.route)
                 
                 val direction = if (initialIndex != -1 && targetIndex != -1) {
-                    // 底部导航栏页面之间的切换
+                    // Chuyển đổi giữa các trang trên thanh điều hướng dưới cùng
                     if (targetIndex > initialIndex) {
                         AnimatedContentTransitionScope.SlideDirection.Left
                     } else {
                         AnimatedContentTransitionScope.SlideDirection.Right
                     }
                 } else {
-                    // 默认的前进导航（如 Home -> Detail）
+                    // Điều hướng tiến mặc định (ví dụ: Home -> Detail)
                     AnimatedContentTransitionScope.SlideDirection.Left
                 }
                 
@@ -307,14 +307,14 @@ fun MainApp(
                 val targetIndex = getNavIndex(targetState.destination.route)
                 
                 val direction = if (initialIndex != -1 && targetIndex != -1) {
-                    // 底部导航栏页面之间的切换
+                    // Chuyển đổi giữa các trang trên thanh điều hướng dưới cùng
                     if (targetIndex > initialIndex) {
                         AnimatedContentTransitionScope.SlideDirection.Left
                     } else {
                         AnimatedContentTransitionScope.SlideDirection.Right
                     }
                 } else {
-                    // 默认的前进导航（如 Home -> Detail）
+                    // Điều hướng tiến mặc định (ví dụ: Home -> Detail)
                     AnimatedContentTransitionScope.SlideDirection.Left
                 }
 
@@ -328,14 +328,14 @@ fun MainApp(
                 val targetIndex = getNavIndex(targetState.destination.route)
                 
                 val direction = if (initialIndex != -1 && targetIndex != -1) {
-                    // 底部导航栏页面之间的切换（通过 popBackStack 触发，如回到 Home）
+                    // Chuyển đổi giữa các trang trên thanh điều hướng dưới cùng (được kích hoạt qua popBackStack, ví dụ: quay lại Home)
                     if (targetIndex > initialIndex) {
                         AnimatedContentTransitionScope.SlideDirection.Left
                     } else {
                         AnimatedContentTransitionScope.SlideDirection.Right
                     }
                 } else {
-                    // 默认的回退导航（如 Detail -> Home）
+                    // Điều hướng lùi mặc định (ví dụ: Detail -> Home)
                     AnimatedContentTransitionScope.SlideDirection.Right
                 }
 
@@ -349,14 +349,14 @@ fun MainApp(
                 val targetIndex = getNavIndex(targetState.destination.route)
                 
                 val direction = if (initialIndex != -1 && targetIndex != -1) {
-                    // 底部导航栏页面之间的切换（通过 popBackStack 触发，如从 Subscription 回到 Home）
+                    // Chuyển đổi giữa các trang trên thanh điều hướng dưới cùng (được kích hoạt qua popBackStack, ví dụ: từ Subscription quay lại Home)
                     if (targetIndex > initialIndex) {
                         AnimatedContentTransitionScope.SlideDirection.Left
                     } else {
                         AnimatedContentTransitionScope.SlideDirection.Right
                     }
                 } else {
-                    // 默认的回退导航（如 Detail -> Home）
+                    // Điều hướng lùi mặc định (ví dụ: Detail -> Home)
                     AnimatedContentTransitionScope.SlideDirection.Right
                 }
 
@@ -432,7 +432,7 @@ fun MainApp(
 
                 UniversalCreatePresetScreen(
                     onSave = {
-                        refreshTrigger++ // 触发刷新
+                        refreshTrigger++ // Kích hoạt làm mới
                         // Navigate back to Home, popping the selection screen as well
                         navController.popBackStack(Screen.Home, false)
                     },
@@ -458,7 +458,7 @@ fun MainApp(
 
                 UniversalCreatePresetScreen(
                     onSave = {
-                        refreshTrigger++ // 触发刷新
+                        refreshTrigger++ // Kích hoạt làm mới
                         navController.popBackStack()
                     },
                     onBack = {
