@@ -1,27 +1,27 @@
-name: 🔨 Build Beta & Release
+name: Build Beta & Release
 
 on:
   push:
     branches: [ main, master ]          # Có thể điều chỉnh nhánh theo nhu cầu
   pull_request:
-    branches: [ main, master ]          # Tùy chọn, thêm xác thực cho PR
+    branches: [ main, master ]          # Tuỳ chọn, thêm xác minh PR
   workflow_dispatch:
     inputs:
       create_release:
-        description: '📦 Tạo Release (Đánh dấu tích và điền Tag ở dưới)'
+        description: 'Tạo Release (Cần điền thẻ sau khi chọn)'
         required: false
         default: false
         type: boolean
       release_tag:
-        description: '🏷️ Tag Release (Ví dụ: v1.2.3)'
+        description: 'Thẻ Release (Ví dụ: v1.2.3)'
         required: false
         type: string
       release_name:
-        description: '📝 Tên Release (Để trống sẽ tự dùng tên Tag)'
+        description: 'Tên Release (Để trống sẽ sử dụng thẻ)'
         required: false
         type: string
       prerelease:
-        description: '🚧 Đánh dấu là bản Tiền phát hành (Pre-release)'
+        description: 'Đánh dấu là phiên bản phát hành trước (prerelease)'
         required: false
         default: false
         type: boolean
@@ -30,18 +30,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout mã nguồn
+      - name: Checkout repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: ☕ Thiết lập JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: 🗄️ Lưu cache Gradle
+      - name: Cache Gradle
         uses: actions/cache@v5
         with:
           path: |
@@ -50,10 +50,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: 🔑 Cấp quyền thực thi cho gradlew
+      - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: ⚙️ Xác định biến thể Build (Build Variant)
+      - name: Determine Build Variant
         id: variant
         run: |
           if [[ "${{ github.event.inputs.create_release }}" == "true" ]]; then
@@ -66,38 +66,38 @@ jobs:
             echo "ARTIFACT_NAME=debug-apk" >> $GITHUB_ENV
           fi
 
-      - name: 🔨 Build APK
+      - name: Build APK
         run: ./gradlew ${{ env.BUILD_TASK }} --no-daemon
 
-      - name: 📤 Upload APK (Universal)
+      - name: Upload Universal APK
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-universal
           path: ${{ env.APK_PATH }}/*-universal-*.apk
           retention-days: 30
 
-      - name: 📤 Upload APK (armeabi-v7a)
+      - name: Upload armeabi-v7a APK
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-armeabi-v7a
           path: ${{ env.APK_PATH }}/*-armeabi-v7a-*.apk
           retention-days: 30
 
-      - name: 📤 Upload APK (arm64-v8a)
+      - name: Upload arm64-v8a APK
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-arm64-v8a
           path: ${{ env.APK_PATH }}/*-arm64-v8a-*.apk
           retention-days: 30
 
-      - name: 📤 Upload APK (x86)
+      - name: Upload x86 APK
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-x86
           path: ${{ env.APK_PATH }}/*-x86-*.apk
           retention-days: 30
 
-      - name: 📤 Upload APK (x86_64)
+      - name: Upload x86_64 APK
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-x86_64
@@ -109,78 +109,78 @@ jobs:
     if: github.event.inputs.create_release == 'true' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
-      contents: write          # Cần quyền để push tag và tạo Release
+      contents: write          # Cần quyền để đẩy thẻ và tạo Release
 
     steps:
-      - name: 📥 Checkout mã nguồn (kèm toàn bộ lịch sử)
+      - name: Checkout repository (with full history)
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🔍 Xác thực thông tin Release
+      - name: Validate release inputs
         run: |
           if [[ -z "${{ github.event.inputs.release_tag }}" ]]; then
-            echo "❌ Lỗi: Bắt buộc phải cung cấp release_tag khi tạo Release"
+            echo "❌ Lỗi: Phải cung cấp release_tag khi tạo Release"
             exit 1
           fi
           if [[ ! "${{ github.event.inputs.release_tag }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-            echo "❌ Lỗi: Định dạng Tag không hợp lệ, vui lòng dùng định dạng vX.Y.Z (Ví dụ: v1.2.3)"
+            echo "❌ Lỗi: Định dạng thẻ không chính xác, vui lòng sử dụng định dạng vX.Y.Z (ví dụ: v1.2.3)"
             exit 1
           fi
           if git tag --list | grep -q "^${{ github.event.inputs.release_tag }}$"; then
-            echo "❌ Lỗi: Tag ${{ github.event.inputs.release_tag }} đã tồn tại"
+            echo "❌ Lỗi: Thẻ ${{ github.event.inputs.release_tag }} đã tồn tại"
             exit 1
           fi
 
-      - name: ⚙️ Cấu hình Git
+      - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-      - name: 📦 Cài đặt git-cliff
+      - name: Install git-cliff
         uses: taiki-e/install-action@v2
         with:
           tool: git-cliff
 
-      - name: 📝 Tạo Release Notes (từ tag trước đó đến HEAD)
+      - name: Generate release notes (from previous tag to HEAD)
         id: changelog
         run: |
           PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
           if [ -z "$PREVIOUS_TAG" ]; then
-            echo "📝 Phiên bản đầu tiên, đang tạo nhật ký cập nhật cho tất cả các commit"
+            echo "📝 Phiên bản đầu tiên, tạo nhật ký cập nhật cho tất cả các commit"
             git-cliff --unreleased --output RELEASE_NOTES.md
           else
-            echo "📝 Đang tạo nhật ký cập nhật từ $PREVIOUS_TAG đến commit hiện tại"
+            echo "📝 Tạo nhật ký cập nhật từ $PREVIOUS_TAG đến commit hiện tại"
             git-cliff ${PREVIOUS_TAG}..HEAD --unreleased --output RELEASE_NOTES.md
           fi
-          echo "📋 Nội dung Release Notes đã tạo:"
+          echo "📋 Mô tả Release đã tạo："
           cat RELEASE_NOTES.md
 
-      - name: 🏷️ Tạo và Push Tag
+      - name: Create and push tag
         run: |
           git tag ${{ github.event.inputs.release_tag }}
           git push origin ${{ github.event.inputs.release_tag }}
 
-      # - name: 📄 Cập nhật toàn bộ CHANGELOG.md (Tùy chọn)
+      # - name: Update full CHANGELOG.md (optional)
       #   run: |
       #     git-cliff --output CHANGELOG.md
       #     if [ -n "$(git status --porcelain CHANGELOG.md)" ]; then
       #       git add CHANGELOG.md
-      #       git commit -m "docs: Cập nhật CHANGELOG.md cho ${{ github.event.inputs.release_tag }}"
+      #       git commit -m "docs: Cập nhật CHANGELOG.md thành ${{ github.event.inputs.release_tag }}"
       #       git push origin HEAD:${GITHUB_REF#refs/heads/}
-      #       echo "✅ CHANGELOG.md đã được cập nhật và push thành công"
+      #       echo "✅ CHANGELOG.md đã được cập nhật và đẩy lên"
       #     else
-      #       echo "ℹ️ CHANGELOG.md không có thay đổi, bỏ qua việc commit"
+      #       echo "ℹ️ CHANGELOG.md không có thay đổi, bỏ qua commit"
       #     fi
 
-      - name: 📥 Tải xuống các file APK (Artifacts)
+      - name: Download APK artifacts
         uses: actions/download-artifact@v8
         with:
           path: ./apk
           merge-multiple: true
 
-      - name: 🚀 Tạo GitHub Release (Bản nháp/Draft)
+      - name: Create GitHub Release (draft)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.release_tag }}
@@ -192,410 +192,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📋 Tổng kết Release
+      - name: Release summary
         run: |
-          echo "🎉 Đã tạo bản nháp (Draft) Release thành công!"
-          echo "  🏷️ Tag: ${{ github.event.inputs.release_tag }}"
-          echo "  📝 Tên: ${{ github.event.inputs.release_name || github.event.inputs.release_tag }}"
-          echo "  🚧 Pre-release: ${{ github.event.inputs.prerelease }}"
-          echo "🔗 Xem tại: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.inputs.release_tag }}"name: 🔨 Build Beta & Release
-
-on:
-  push:
-    branches: [ main, master ]          # Có thể điều chỉnh nhánh theo nhu cầu
-  pull_request:
-    branches: [ main, master ]          # Tùy chọn, thêm xác thực cho PR
-  workflow_dispatch:
-    inputs:
-      create_release:
-        description: '📦 Tạo Release (Đánh dấu tích và điền Tag ở dưới)'
-        required: false
-        default: false
-        type: boolean
-      release_tag:
-        description: '🏷️ Tag Release (Ví dụ: v1.2.3)'
-        required: false
-        type: string
-      release_name:
-        description: '📝 Tên Release (Để trống sẽ tự dùng tên Tag)'
-        required: false
-        type: string
-      prerelease:
-        description: '🚧 Đánh dấu là bản Tiền phát hành (Pre-release)'
-        required: false
-        default: false
-        type: boolean
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout mã nguồn
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: ☕ Thiết lập JDK 17
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: 🗄️ Lưu cache Gradle
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}
-          restore-keys: ${{ runner.os }}-gradle-
-
-      - name: 🔑 Cấp quyền thực thi cho gradlew
-        run: chmod +x gradlew
-
-      - name: ⚙️ Xác định biến thể Build (Build Variant)
-        id: variant
-        run: |
-          if [[ "${{ github.event.inputs.create_release }}" == "true" ]]; then
-            echo "BUILD_TASK=assembleRelease" >> $GITHUB_ENV
-            echo "APK_PATH=app/build/outputs/apk/release" >> $GITHUB_ENV
-            echo "ARTIFACT_NAME=release-apk" >> $GITHUB_ENV
-          else
-            echo "BUILD_TASK=assembleDebug" >> $GITHUB_ENV
-            echo "APK_PATH=app/build/outputs/apk/debug" >> $GITHUB_ENV
-            echo "ARTIFACT_NAME=debug-apk" >> $GITHUB_ENV
-          fi
-
-      - name: 🔨 Build APK
-        run: ./gradlew ${{ env.BUILD_TASK }} --no-daemon
-
-      - name: 📤 Upload APK (Universal)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-universal
-          path: ${{ env.APK_PATH }}/*-universal-*.apk
-          retention-days: 30
-
-      - name: 📤 Upload APK (armeabi-v7a)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-armeabi-v7a
-          path: ${{ env.APK_PATH }}/*-armeabi-v7a-*.apk
-          retention-days: 30
-
-      - name: 📤 Upload APK (arm64-v8a)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-arm64-v8a
-          path: ${{ env.APK_PATH }}/*-arm64-v8a-*.apk
-          retention-days: 30
-
-      - name: 📤 Upload APK (x86)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-x86
-          path: ${{ env.APK_PATH }}/*-x86-*.apk
-          retention-days: 30
-
-      - name: 📤 Upload APK (x86_64)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-x86_64
-          path: ${{ env.APK_PATH }}/*-x86_64-*.apk
-          retention-days: 30
-
-  release:
-    needs: build
-    if: github.event.inputs.create_release == 'true' && github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write          # Cần quyền để push tag và tạo Release
-
-    steps:
-      - name: 📥 Checkout mã nguồn (kèm toàn bộ lịch sử)
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 🔍 Xác thực thông tin Release
-        run: |
-          if [[ -z "${{ github.event.inputs.release_tag }}" ]]; then
-            echo "❌ Lỗi: Bắt buộc phải cung cấp release_tag khi tạo Release"
-            exit 1
-          fi
-          if [[ ! "${{ github.event.inputs.release_tag }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-            echo "❌ Lỗi: Định dạng Tag không hợp lệ, vui lòng dùng định dạng vX.Y.Z (Ví dụ: v1.2.3)"
-            exit 1
-          fi
-          if git tag --list | grep -q "^${{ github.event.inputs.release_tag }}$"; then
-            echo "❌ Lỗi: Tag ${{ github.event.inputs.release_tag }} đã tồn tại"
-            exit 1
-          fi
-
-      - name: ⚙️ Cấu hình Git
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-
-      - name: 📦 Cài đặt git-cliff
-        uses: taiki-e/install-action@v2
-        with:
-          tool: git-cliff
-
-      - name: 📝 Tạo Release Notes (từ tag trước đó đến HEAD)
-        id: changelog
-        run: |
-          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-          if [ -z "$PREVIOUS_TAG" ]; then
-            echo "📝 Phiên bản đầu tiên, đang tạo nhật ký cập nhật cho tất cả các commit"
-            git-cliff --unreleased --output RELEASE_NOTES.md
-          else
-            echo "📝 Đang tạo nhật ký cập nhật từ $PREVIOUS_TAG đến commit hiện tại"
-            git-cliff ${PREVIOUS_TAG}..HEAD --unreleased --output RELEASE_NOTES.md
-          fi
-          echo "📋 Nội dung Release Notes đã tạo:"
-          cat RELEASE_NOTES.md
-
-      - name: 🏷️ Tạo và Push Tag
-        run: |
-          git tag ${{ github.event.inputs.release_tag }}
-          git push origin ${{ github.event.inputs.release_tag }}
-
-      # - name: 📄 Cập nhật toàn bộ CHANGELOG.md (Tùy chọn)
-      #   run: |
-      #     git-cliff --output CHANGELOG.md
-      #     if [ -n "$(git status --porcelain CHANGELOG.md)" ]; then
-      #       git add CHANGELOG.md
-      #       git commit -m "docs: Cập nhật CHANGELOG.md cho ${{ github.event.inputs.release_tag }}"
-      #       git push origin HEAD:${GITHUB_REF#refs/heads/}
-      #       echo "✅ CHANGELOG.md đã được cập nhật và push thành công"
-      #     else
-      #       echo "ℹ️ CHANGELOG.md không có thay đổi, bỏ qua việc commit"
-      #     fi
-
-      - name: 📥 Tải xuống các file APK (Artifacts)
-        uses: actions/download-artifact@v8
-        with:
-          path: ./apk
-          merge-multiple: true
-
-      - name: 🚀 Tạo GitHub Release (Bản nháp/Draft)
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.event.inputs.release_tag }}
-          name: ${{ github.event.inputs.release_name || github.event.inputs.release_tag }}
-          body_path: RELEASE_NOTES.md
-          draft: true
-          prerelease: ${{ github.event.inputs.prerelease }}
-          files: ./apk/**/*.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 📋 Tổng kết Release
-        run: |
-          echo "🎉 Đã tạo bản nháp (Draft) Release thành công!"
-          echo "  🏷️ Tag: ${{ github.event.inputs.release_tag }}"
-          echo "  📝 Tên: ${{ github.event.inputs.release_name || github.event.inputs.release_tag }}"
-          echo "  🚧 Pre-release: ${{ github.event.inputs.prerelease }}"
-          echo "🔗 Xem tại: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.inputs.release_tag }}"name: 🔨 Build Beta & Release
-
-on:
-  push:
-    branches: [ main, master ]          # Có thể điều chỉnh nhánh theo nhu cầu
-  pull_request:
-    branches: [ main, master ]          # Tùy chọn, thêm xác thực cho PR
-  workflow_dispatch:
-    inputs:
-      create_release:
-        description: '📦 Tạo Release (Đánh dấu tích và điền Tag ở dưới)'
-        required: false
-        default: false
-        type: boolean
-      release_tag:
-        description: '🏷️ Tag Release (Ví dụ: v1.2.3)'
-        required: false
-        type: string
-      release_name:
-        description: '📝 Tên Release (Để trống sẽ tự dùng tên Tag)'
-        required: false
-        type: string
-      prerelease:
-        description: '🚧 Đánh dấu là bản Tiền phát hành (Pre-release)'
-        required: false
-        default: false
-        type: boolean
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout mã nguồn
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: ☕ Thiết lập JDK 17
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: 🗄️ Lưu cache Gradle
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}
-          restore-keys: ${{ runner.os }}-gradle-
-
-      - name: 🔑 Cấp quyền thực thi cho gradlew
-        run: chmod +x gradlew
-
-      - name: ⚙️ Xác định biến thể Build (Build Variant)
-        id: variant
-        run: |
-          if [[ "${{ github.event.inputs.create_release }}" == "true" ]]; then
-            echo "BUILD_TASK=assembleRelease" >> $GITHUB_ENV
-            echo "APK_PATH=app/build/outputs/apk/release" >> $GITHUB_ENV
-            echo "ARTIFACT_NAME=release-apk" >> $GITHUB_ENV
-          else
-            echo "BUILD_TASK=assembleDebug" >> $GITHUB_ENV
-            echo "APK_PATH=app/build/outputs/apk/debug" >> $GITHUB_ENV
-            echo "ARTIFACT_NAME=debug-apk" >> $GITHUB_ENV
-          fi
-
-      - name: 🔨 Build APK
-        run: ./gradlew ${{ env.BUILD_TASK }} --no-daemon
-
-      - name: 📤 Upload APK (Universal)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-universal
-          path: ${{ env.APK_PATH }}/*-universal-*.apk
-          retention-days: 30
-
-      - name: 📤 Upload APK (armeabi-v7a)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-armeabi-v7a
-          path: ${{ env.APK_PATH }}/*-armeabi-v7a-*.apk
-          retention-days: 30
-
-      - name: 📤 Upload APK (arm64-v8a)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-arm64-v8a
-          path: ${{ env.APK_PATH }}/*-arm64-v8a-*.apk
-          retention-days: 30
-
-      - name: 📤 Upload APK (x86)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-x86
-          path: ${{ env.APK_PATH }}/*-x86-*.apk
-          retention-days: 30
-
-      - name: 📤 Upload APK (x86_64)
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ env.ARTIFACT_NAME }}-x86_64
-          path: ${{ env.APK_PATH }}/*-x86_64-*.apk
-          retention-days: 30
-
-  release:
-    needs: build
-    if: github.event.inputs.create_release == 'true' && github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write          # Cần quyền để push tag và tạo Release
-
-    steps:
-      - name: 📥 Checkout mã nguồn (kèm toàn bộ lịch sử)
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 🔍 Xác thực thông tin Release
-        run: |
-          if [[ -z "${{ github.event.inputs.release_tag }}" ]]; then
-            echo "❌ Lỗi: Bắt buộc phải cung cấp release_tag khi tạo Release"
-            exit 1
-          fi
-          if [[ ! "${{ github.event.inputs.release_tag }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-            echo "❌ Lỗi: Định dạng Tag không hợp lệ, vui lòng dùng định dạng vX.Y.Z (Ví dụ: v1.2.3)"
-            exit 1
-          fi
-          if git tag --list | grep -q "^${{ github.event.inputs.release_tag }}$"; then
-            echo "❌ Lỗi: Tag ${{ github.event.inputs.release_tag }} đã tồn tại"
-            exit 1
-          fi
-
-      - name: ⚙️ Cấu hình Git
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-
-      - name: 📦 Cài đặt git-cliff
-        uses: taiki-e/install-action@v2
-        with:
-          tool: git-cliff
-
-      - name: 📝 Tạo Release Notes (từ tag trước đó đến HEAD)
-        id: changelog
-        run: |
-          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-          if [ -z "$PREVIOUS_TAG" ]; then
-            echo "📝 Phiên bản đầu tiên, đang tạo nhật ký cập nhật cho tất cả các commit"
-            git-cliff --unreleased --output RELEASE_NOTES.md
-          else
-            echo "📝 Đang tạo nhật ký cập nhật từ $PREVIOUS_TAG đến commit hiện tại"
-            git-cliff ${PREVIOUS_TAG}..HEAD --unreleased --output RELEASE_NOTES.md
-          fi
-          echo "📋 Nội dung Release Notes đã tạo:"
-          cat RELEASE_NOTES.md
-
-      - name: 🏷️ Tạo và Push Tag
-        run: |
-          git tag ${{ github.event.inputs.release_tag }}
-          git push origin ${{ github.event.inputs.release_tag }}
-
-      # - name: 📄 Cập nhật toàn bộ CHANGELOG.md (Tùy chọn)
-      #   run: |
-      #     git-cliff --output CHANGELOG.md
-      #     if [ -n "$(git status --porcelain CHANGELOG.md)" ]; then
-      #       git add CHANGELOG.md
-      #       git commit -m "docs: Cập nhật CHANGELOG.md cho ${{ github.event.inputs.release_tag }}"
-      #       git push origin HEAD:${GITHUB_REF#refs/heads/}
-      #       echo "✅ CHANGELOG.md đã được cập nhật và push thành công"
-      #     else
-      #       echo "ℹ️ CHANGELOG.md không có thay đổi, bỏ qua việc commit"
-      #     fi
-
-      - name: 📥 Tải xuống các file APK (Artifacts)
-        uses: actions/download-artifact@v8
-        with:
-          path: ./apk
-          merge-multiple: true
-
-      - name: 🚀 Tạo GitHub Release (Bản nháp/Draft)
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.event.inputs.release_tag }}
-          name: ${{ github.event.inputs.release_name || github.event.inputs.release_tag }}
-          body_path: RELEASE_NOTES.md
-          draft: true
-          prerelease: ${{ github.event.inputs.prerelease }}
-          files: ./apk/**/*.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 📋 Tổng kết Release
-        run: |
-          echo "🎉 Đã tạo bản nháp (Draft) Release thành công!"
-          echo "  🏷️ Tag: ${{ github.event.inputs.release_tag }}"
-          echo "  📝 Tên: ${{ github.event.inputs.release_name || github.event.inputs.release_tag }}"
-          echo "  🚧 Pre-release: ${{ github.event.inputs.prerelease }}"
-          echo "🔗 Xem tại: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.inputs.release_tag }}"
+          echo "🎉 Đã tạo bản nháp Release thành công!"
+          echo "  Thẻ: ${{ github.event.inputs.release_tag }}"
+          echo "  Tên: ${{ github.event.inputs.release_name || github.event.inputs.release_tag }}"
+          echo "  Phát hành trước: ${{ github.event.inputs.prerelease }}"
+          echo "🔗 Địa chỉ xem: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.inputs.release_tag }}"
