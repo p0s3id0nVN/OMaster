@@ -1077,7 +1077,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1087,12 +1087,12 @@
         "Pro"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】日间户外或柔和光线\n【场景推荐】人像、风景、日系场景、文艺摄影\n【拍摄要点】Pro模式自动曝光，轻微过曝营造梦幻感，复古色调配合梦幻柔光，适合唯美人像和风景"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Ngoài trời ban ngày hoặc ánh sáng dịu nhẹ\n【Đề xuất bối cảnh】Chân dung, phong cảnh, bối cảnh kiểu Nhật, nhiếp ảnh nghệ thuật\n【Điểm chính khi chụp】Chế độ Pro phơi sáng tự động, phơi sáng quá mức nhẹ tạo cảm giác mộng mơ, tông màu retro kết hợp ánh sáng dịu mộng mơ, phù hợp với chân dung thẩm mỹ và phong cảnh"
       }
     },
     {
-      "name": "哈苏浓郁",
+      "name": "Hasselblad đậm đà",
       "coverPath": "images/hsny_01.webp",
       "galleryImages": [
         "images/hsny_02.webp",
@@ -1105,12 +1105,12 @@
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "浓郁 100%",
+              "value": "Đậm đà 100%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "梦幻",
+              "value": "Mộng mơ",
               "span": 1
             },
             {
@@ -1140,7 +1140,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1150,12 +1150,12 @@
         "Auto"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】光线充足的户外或室内\n【场景推荐】风景、建筑、人像、艺术摄影\n【拍摄要点】模拟哈苏自然色彩解决方案，色彩浓郁但不失真，适合追求高品质色彩表现的场景"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Ngoài trời hoặc trong nhà có đủ ánh sáng\n【Đề xuất bối cảnh】Phong cảnh, kiến trúc, chân dung, nhiếp ảnh nghệ thuật\n【Điểm chính khi chụp】Mô phỏng giải pháp màu sắc tự nhiên của Hasselblad, màu sắc đậm đà nhưng không bị biến dạng, phù hợp với các bối cảnh theo đuổi hiệu suất màu sắc chất lượng cao"
       }
     },
     {
-      "name": "假日清新",
+      "name": "Kỳ nghỉ tươi mát",
       "coverPath": "images/jrqx_01.webp",
       "galleryImages": [
         "images/jrqx_02.webp",
@@ -1168,12 +1168,12 @@
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "清新 100%",
+              "value": "Tươi mát 100%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "无",
+              "value": "Không",
               "span": 1
             },
             {
@@ -1203,7 +1203,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1213,12 +1213,12 @@
         "Auto"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】晴朗天气或明亮的度假场景\n【场景推荐】海边、度假、旅行、夏日户外\n【拍摄要点】影调明亮通透，饱和度略低营造清新感，适合度假和旅行场景，记录轻松愉快的时光"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Thời tiết quang đãng hoặc bối cảnh kỳ nghỉ tươi sáng\n【Đề xuất bối cảnh】Bờ biển, kỳ nghỉ, du lịch, ngoài trời mùa hè\n【Điểm chính khi chụp】Tông màu sáng và trong trẻo, độ bão hòa hơi thấp tạo cảm giác tươi mới, phù hợp với bối cảnh kỳ nghỉ và du lịch, ghi lại khoảng thời gian thư giãn và vui vẻ"
       }
     },
     {
-      "name": "梦幻黑白",
+      "name": "Đen trắng mộng mơ",
       "coverPath": "images/mhhb_01.webp",
       "galleryImages": [
         "images/mhhb_02.webp"
@@ -1230,12 +1230,12 @@
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "黑白 25%",
+              "value": "Đen trắng 25%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "梦幻",
+              "value": "Mộng mơ",
               "span": 1
             },
             {
@@ -1265,7 +1265,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1275,12 +1275,12 @@
         "Auto"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】柔和光线或阴天\n【场景推荐】情绪人像、艺术摄影、静物、建筑\n【拍摄要点】保留轻微色彩信息，梦幻柔光营造艺术感，适合追求艺术表达的黑白摄影"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Ánh sáng dịu nhẹ hoặc ngày nhiều mây\n【Đề xuất bối cảnh】Chân dung tâm trạng, nhiếp ảnh nghệ thuật, tĩnh vật, kiến trúc\n【Điểm chính khi chụp】Giữ lại một chút thông tin màu sắc, ánh sáng dịu mộng mơ tạo cảm giác nghệ thuật, phù hợp để theo đuổi sự thể hiện nghệ thuật trong nhiếp ảnh đen trắng"
       }
     },
     {
-      "name": "美味梦境",
+      "name": "Giấc mơ ngon miệng",
       "coverPath": "images/mwmj_01.webp",
       "galleryImages": [
         "images/mwmj_02.webp"
@@ -1292,12 +1292,12 @@
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "美味 50%",
+              "value": "Ngon miệng 50%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "梦幻",
+              "value": "Mộng mơ",
               "span": 1
             },
             {
@@ -1327,7 +1327,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1337,12 +1337,12 @@
         "Auto"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】餐厅、咖啡馆、温馨室内\n【场景推荐】美食、甜品、饮品、精致小物\n【拍摄要点】梦幻柔光营造温馨氛围，影调略暗突出质感，适合拍摄精致美食和温馨场景"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Nhà hàng, quán cà phê, trong nhà ấm áp\n【Đề xuất bối cảnh】Ẩm thực, món tráng miệng, đồ uống, đồ vật tinh tế\n【Điểm chính khi chụp】Ánh sáng dịu mộng mơ tạo bầu không khí ấm áp, tông màu hơi tối làm nổi bật kết cấu, phù hợp để chụp đồ ăn tinh tế và bối cảnh ấm áp"
       }
     },
     {
-      "name": "蓝调通透",
+      "name": "Xanh lam trong trẻo",
       "coverPath": "images/ldtt_01.webp",
       "galleryImages": [
         "images/ldtt_02.webp"
@@ -1374,12 +1374,12 @@
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "清新 94%",
+              "value": "Tươi mát 94%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "梦幻",
+              "value": "Mộng mơ",
               "span": 1
             },
             {
@@ -1409,7 +1409,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1419,12 +1419,12 @@
         "Pro"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】日间户外或室内、海边、天空、水面\n【场景推荐】风景、建筑、人像、静物\n【拍摄要点】蓝调通透风格，冷色调营造清新通透感，轻微欠曝保留细节，梦幻柔光增加氛围感，适合拍摄清新风景和人像"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Ngoài trời hoặc trong nhà ban ngày, bờ biển, bầu trời, mặt nước\n【Đề xuất bối cảnh】Phong cảnh, kiến trúc, chân dung, tĩnh vật\n【Điểm chính khi chụp】Phong cách xanh lam trong trẻo, tông màu lạnh tạo cảm giác tươi mát và trong trẻo, thiếu sáng nhẹ để giữ lại chi tiết, ánh sáng dịu mộng mơ tăng thêm bầu không khí, phù hợp để chụp phong cảnh tươi mát và chân dung"
       }
     },
     {
-      "name": "晴天复古",
+      "name": "Retro ngày nắng",
       "coverPath": "images/qtfw_01.webp",
       "galleryImages": [
         "images/qtfw_02.webp"
@@ -1466,12 +1466,12 @@
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "复古 100%",
+              "value": "Retro 100%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "柔美",
+              "value": "Mềm mại",
               "span": 1
             },
             {
@@ -1501,7 +1501,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1511,12 +1511,12 @@
         "Pro"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】晴天户外、阳光充足场景\n【场景推荐】街拍、人像、风景、复古场景\n【拍摄要点】晴天复古风格，色温5000K还原自然色彩，负色调营造复古感，轻微欠曝保留高光细节，暖调柔光增加复古氛围，适合拍摄晴天户外人像和风景"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Ngoài trời ngày nắng, cảnh có nhiều ánh sáng mặt trời\n【Đề xuất bối cảnh】Chụp ảnh đường phố, chân dung, phong cảnh, cảnh retro\n【Điểm chính khi chụp】Phong cách retro ngày nắng, nhiệt độ màu 5000K khôi phục màu sắc tự nhiên, tông màu âm tạo cảm giác retro, thiếu sáng nhẹ để giữ chi tiết vùng sáng, ánh sáng dịu tông ấm làm tăng bầu không khí retro, phù hợp để chụp chân dung và phong cảnh ngoài trời ngày nắng"
       }
     },
     {
-      "name": "霓虹灯",
+      "name": "Đèn neon",
       "coverPath": "images/nhd_01.webp",
       "galleryImages": [
         "images/nhd_02.webp",
@@ -1549,12 +1549,12 @@
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "浓郁 100%",
+              "value": "Đậm đà 100%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "柔美",
+              "value": "Mềm mại",
               "span": 1
             },
             {
@@ -1584,7 +1584,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1594,12 +1594,12 @@
         "Pro"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】夜晚城市、霓虹灯招牌、繁华街道\n【场景推荐】夜景、街景、人像、城市风光\n【拍摄要点】霓虹灯风格，浓郁滤镜增强色彩饱和度，柔美柔光营造梦幻感，轻微欠曝保留霓虹细节，适合拍摄夜晚城市霓虹灯场景"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Thành phố về đêm, biển hiệu đèn neon, đường phố nhộn nhịp\n【Đề xuất bối cảnh】Cảnh đêm, cảnh đường phố, chân dung, phong cảnh thành phố\n【Điểm chính khi chụp】Phong cách đèn neon, bộ lọc đậm đà tăng cường độ bão hòa màu sắc, ánh sáng dịu mềm mại tạo cảm giác mộng mơ, thiếu sáng nhẹ để giữ chi tiết đèn neon, phù hợp để chụp cảnh đèn neon trong thành phố về đêm"
       }
     },
     {
-      "name": "复古怀旧",
+      "name": "Retro hoài cổ",
       "coverPath": "images/fghj_01.webp",
       "galleryImages": [
         "images/fghj_02.webp"
@@ -1631,12 +1631,12 @@
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "复古 65%",
+              "value": "Retro 65%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "无",
+              "value": "Không",
               "span": 1
             },
             {
@@ -1666,7 +1666,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1676,30 +1676,29 @@
         "Pro"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】老城区、复古场景、室内怀旧场景\n【场景推荐】老物件、街景、人像、故事性场景\n【拍摄要点】复古怀旧风格，65%复古滤镜营造怀旧感，低影调增加复古氛围，降低饱和度模拟老照片质感，适合拍摄怀旧主题照片"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Khu phố cổ, bối cảnh retro, bối cảnh hoài cổ trong nhà\n【Đề xuất bối cảnh】Đồ vật cũ, cảnh đường phố, chân dung, cảnh có tính kể chuyện\n【Điểm chính khi chụp】Phong cách retro hoài cổ, bộ lọc retro 65% tạo cảm giác hoài cổ, tông màu thấp tăng bầu không khí retro, giảm độ bão hòa để mô phỏng kết cấu ảnh cũ, phù hợp để chụp ảnh chủ đề hoài cổ"
       }
     },
     {
-      "name": "春日清新",
+      "name": "Mùa xuân tươi mát",
       "coverPath": "https://cdn.fky.ltd/crqx_01.webp",
       "galleryImages": [
         "https://cdn.fky.ltd/crqx_02.webp"
       ],
       "author": "@屋顶橙子味",
-      
       "sections": [
         {
           "title": "@string/section_color_grading",
           "items": [
             {
               "label": "@string/param_filter",
-              "value": "清新 90%",
+              "value": "Tươi mát 90%",
               "span": 2
             },
             {
               "label": "@string/param_soft_light",
-              "value": "柔美",
+              "value": "Mềm mại",
               "span": 1
             },
             {
@@ -1729,7 +1728,7 @@
             },
             {
               "label": "@string/param_vignette",
-              "value": "开",
+              "value": "Bật",
               "span": 2
             }
           ]
@@ -1739,8 +1738,8 @@
         "Auto"
       ],
       "description": {
-        "title": "Shooting Tips",
-        "content": "【环境建议】春日户外，光线柔和的场景\n【场景推荐】花卉、人像、风景、日常记录\n【拍摄要点】清新明亮的色调，适合表现春天的生机与活力"
+        "title": "Mẹo chụp ảnh",
+        "content": "【Gợi ý môi trường】Ngoài trời mùa xuân, cảnh có ánh sáng dịu\n【Đề xuất bối cảnh】Hoa, chân dung, phong cảnh, ghi lại hàng ngày\n【Điểm chính khi chụp】Tông màu tươi mát và tươi sáng, phù hợp để thể hiện sức sống và năng lượng của mùa xuân"
       }
     }
   ]
