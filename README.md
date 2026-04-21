@@ -2,8 +2,8 @@
 
 <p align="center">
   <a href="README_EN.md">VN Vietnamese</a> |
-  <a href="README_CN.md">🇨🇳 中文</a> | 
-  <a href="README_EN.md">🇺🇸 English</a>
+  <a href="README_EN.md">🇺🇸 English</a> |
+  <a href="README_CN.md">🇨🇳 中文</a>
 </p>
 
 <p align="center">
